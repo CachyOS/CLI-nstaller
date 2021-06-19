@@ -4,4 +4,4 @@
 .PKGINFO
 pkg/
 src/
-
+cachyos_install.py

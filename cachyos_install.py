@@ -46,6 +46,19 @@ def print_cachyos_banner():
 
 	print("\nWelcome to the CachyOS installer")
 
+def show_iwctl():
+	archinstall.log("Instructions to connect to wifi using iwclt:", fg="yellow")
+	archinstall.log("\t1- when iwclt opened, type `station list`", fg="yellow")
+	archinstall.log("\t2- see your wifi device name ex. wlan0", fg="yellow")
+	archinstall.log("\t3- type `station wlan0 scan`, and wait couple seconds", fg="yellow")
+	archinstall.log("\t4- type `station wlan0 get-networks` (find your wifi Network name ex. my_wifi)", fg="yellow")
+	archinstall.log("\t5- type `station wlan0 connect my_wifi` (don't forget to press TAB for auto completion!)", fg="yellow")
+	archinstall.log("\t6- type `station wlan0 show` (status should be connected)", fg="yellow")
+	archinstall.log("\t7- type `exit`", fg="yellow")
+
+	input("Press Enter to continue to iwctl...")
+	os.system("iwctl")
+
 def check_internet_connectivity():
 	print("\nChecking internet connectivity...")
 
@@ -53,10 +66,19 @@ def check_internet_connectivity():
 	try:
 		conn.request("HEAD", "/")
 		conn.close()
-		archinstall.log("Connected to the Internet.", fg="green")
+		archinstall.log("Connected to the Internet \u2714", fg="green")
 	except:
 		conn.close()
-		archinstall.log("Not connected to the Internet!", fg="red")
+		archinstall.log("Not connected to the Internet!, please check!", fg="red")
+		print(bcolors.YELLOW + "In case you are using wifi, do you want to connect to wifi? (y/n): " + bcolors.ENDC, end="")
+		r = input()
+		if r == "y" or r == "Y":
+			show_iwctl()
+			check_internet_connectivity()
+		else:
+			archinstall.log("You are exiting the installer. To run the installer again run/type `install_cachyos`", fg="yellow")
+			archinstall.log("Exiting...")
+			exit()
 
 
 def print_margin():
