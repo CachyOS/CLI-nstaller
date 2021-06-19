@@ -4,4 +4,4 @@
 .PKGINFO
 pkg/
 src/
-cachyos_install.py
+cp_to_shared.sh

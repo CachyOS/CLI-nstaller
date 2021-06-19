@@ -22,6 +22,7 @@ class bcolors:
 	OKGREEN = '\033[92m'
 	YELLOW = '\033[93m'
 	RED = '\033[91m'
+	GRAY = '\033[1;37m'
 	ORANGE = '\033[33m'
 	BLACK = '\033[30m'
 	BG_WHITE = '\033[47m'
@@ -66,7 +67,7 @@ def check_internet_connectivity():
 	try:
 		conn.request("HEAD", "/")
 		conn.close()
-		archinstall.log("Connected to the Internet \u2714", fg="green")
+		archinstall.log("Connected to the Internet (OK)", fg="green")
 	except:
 		conn.close()
 		archinstall.log("Not connected to the Internet!, please check!", fg="red")
@@ -89,11 +90,26 @@ def print_margin():
 print_cachyos_banner()
 check_internet_connectivity()
 print_margin()
-exit()
 
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
+separator_text = ""
+total_steps = "10"
+g_current_step = ""
+def print_separator(current_step = ""):
+	global separator_text
+	global g_current_step
+
+	if current_step:
+		g_current_step = current_step
+
+	if not separator_text:
+		t_width = os.get_terminal_size().columns
+		for i in range(t_width - 8):
+			separator_text += "-"
+
+	print(bcolors.GRAY + separator_text + " " + g_current_step + " / " + total_steps + bcolors.ENDC, flush=True)
 
 def ask_user_questions():
 	"""
@@ -101,6 +117,7 @@ def ask_user_questions():
 		Not until we're satisfied with what we want to install
 		will we continue with the actual installation steps.
 	"""
+	print_separator("1")
 	if not archinstall.arguments.get('keyboard-language', None):
 		while True:
 			try:
@@ -114,6 +131,7 @@ def ask_user_questions():
 	if len(archinstall.arguments['keyboard-language']):
 		archinstall.set_keyboard_language(archinstall.arguments['keyboard-language'])
 
+	print_separator("2")
 	# Set which region to download packages from during the installation
 	if not archinstall.arguments.get('mirror-region', None):
 		while True:
@@ -136,6 +154,7 @@ def ask_user_questions():
 	if not archinstall.arguments.get('sys-encoding', None):
 		archinstall.arguments['sys-encoding'] = 'utf-8'
 
+	print_separator("3")
 	# Ask which harddrive/block-device we will install to
 	if archinstall.arguments.get('harddrive', None):
 		archinstall.arguments['harddrive'] = archinstall.BlockDevice(archinstall.arguments['harddrive'])
@@ -144,6 +163,7 @@ def ask_user_questions():
 		if archinstall.arguments['harddrive'] is None:
 			archinstall.arguments['target-mount'] = archinstall.storage.get('MOUNT_POINT', '/mnt')
 
+	print_separator()
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
 	# 3. Check that we support the current partitions
@@ -173,6 +193,7 @@ def ask_user_questions():
 			archinstall.log(" ** The root would be a simple / and the boot partition /boot (as all paths are relative inside the installation). **")
 			mountpoints_set = []
 			while True:
+				print_separator()
 				# Select a partition
 				# If we provide keys as options, it's better to convert them to list and sort before passing
 				mountpoints_list = sorted(list(partition_mountpoints.keys()))
@@ -232,12 +253,14 @@ def ask_user_questions():
 			archinstall.log('Using existing partition table reported above.')
 		elif option == 'format-all':
 			if not archinstall.arguments.get('filesystem', None):
+				print_separator()
 				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 			archinstall.arguments['harddrive'].keep_partitions = False
 	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
 		# and ask the user for a root filesystem.
 		if not archinstall.arguments.get('filesystem', None):
+			print_separator()
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
 		archinstall.arguments['harddrive'].keep_partitions = False
 
@@ -247,10 +270,12 @@ def ask_user_questions():
 			archinstall.arguments['!encryption-password'] = passwd
 			archinstall.arguments['harddrive'].encryption_password = archinstall.arguments['!encryption-password']
 	archinstall.arguments["bootloader"] = archinstall.ask_for_bootloader()
+
 	# Get the hostname for the machine
 	if not archinstall.arguments.get('hostname', None):
-		archinstall.arguments['hostname'] = input('Desired hostname for the installation: ').strip(' ')
+		archinstall.arguments['hostname'] = "CachyOS"
 
+	print_separator("4")
 	# Ask for a root password (optional, but triggers requirement for super-user if skipped)
 	if not archinstall.arguments.get('!root-password', None):
 		archinstall.arguments['!root-password'] = archinstall.get_password(prompt='Enter root password (Recommendation: leave blank to leave root disabled): ')
@@ -259,12 +284,15 @@ def ask_user_questions():
 	archinstall.arguments['users'] = {}
 	archinstall.arguments['superusers'] = {}
 	if not archinstall.arguments.get('!root-password', None):
-		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Create a required super-user with sudo privileges: ', forced=True)
+		# print_separator()
+		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Enter a username (required super-user with sudo privileges): ', forced=True)
 
+	print_separator()
 	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
 	archinstall.arguments['users'] = users
 	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
+	print_separator("5")
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
 	if not archinstall.arguments.get('profile', None):
 		archinstall.arguments['profile'] = archinstall.select_profile()
@@ -293,6 +321,8 @@ def ask_user_questions():
 		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
 		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
 
+	print()
+	print_separator("7")
 	# Additional packages (with some light weight error handling for invalid package names)
 	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
 	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
@@ -313,15 +343,18 @@ def ask_user_questions():
 			# no additional packages were selected, which we'll allow
 			break
 
+	print_separator("8")
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
 		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
 		if not archinstall.arguments['nic']:
 			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
 
+	print_separator("9")
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
+	print_separator("10")
 	if archinstall.arguments['timezone']:
 		if not archinstall.arguments.get('ntp', False):
 			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
@@ -334,9 +367,14 @@ def perform_installation_steps():
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
 	user_configuration = json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON)
-	archinstall.log(user_configuration, level=logging.INFO)
+	# with open("/var/log/archinstall/user_configuration.temp.json", "w") as config_file:
+		# config_file.write(user_configuration)
+	# archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
+
+	os.system("more /var/log/archinstall/user_configuration.json")
+
 	print()
 
 	if not archinstall.arguments.get('silent'):
@@ -502,10 +540,12 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
+print("Check if Arch Linux mirrors are not reachable... ", flush=True, end="")
 if not check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
+print(bcolors.OKGREEN + "(OK)" + bcolors.ENDC)
 
 if archinstall.arguments.get('silent', None) is None:
 	ask_user_questions()
