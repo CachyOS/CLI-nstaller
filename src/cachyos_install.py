@@ -1,0 +1,1 @@
+/home/hamad/dev/cachyos/cachyos_installer/cachyos_install.py
