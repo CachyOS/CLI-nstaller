@@ -313,6 +313,8 @@ def ask_user_questions():
 			if not archinstall.arguments.get('filesystem', None):
 				print_separator()
 				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+				if not archinstall.arguments.get('filesystem', None):
+					archinstall.arguments['filesystem'] = "xfs"
 			archinstall.arguments['harddrive'].keep_partitions = False
 	elif archinstall.arguments['harddrive']:
 		# If the drive doesn't have any partitions, safely mark the disk with keep_partitions = False
@@ -320,6 +322,8 @@ def ask_user_questions():
 		if not archinstall.arguments.get('filesystem', None):
 			print_separator()
 			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+			if not archinstall.arguments.get('filesystem', None):
+				archinstall.arguments['filesystem'] = "xfs"
 		archinstall.arguments['harddrive'].keep_partitions = False
 
 	# Get disk encryption password (or skip if blank)
@@ -432,7 +436,7 @@ def perform_installation_steps():
 		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
 			# Wipe the entire drive if the disk flag `keep_partitions`is False.
 			if archinstall.arguments['harddrive'].keep_partitions is False:
-				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'btrfs'))
+				fs.use_entire_disk(root_filesystem_type=archinstall.arguments.get('filesystem', 'xfs'))
 
 			# Check if encryption is desired and mark the root partition as encrypted.
 			if archinstall.arguments.get('!encryption-password', None):
