@@ -15,6 +15,9 @@ from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
+cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
+cachyos_packages = "linux-cacule-headers linux-cacule cachyos-installer"
+
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -91,11 +94,12 @@ print_cachyos_banner()
 check_internet_connectivity()
 print_margin()
 
+
 # For support reasons, we'll log the disk layout pre installation to match against post-installation layout
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 separator_text = ""
-total_steps = "10"
+total_steps = "8"
 g_current_step = ""
 def print_separator(current_step = ""):
 	global separator_text
@@ -110,6 +114,53 @@ def print_separator(current_step = ""):
 			separator_text += "-"
 
 	print(bcolors.GRAY + separator_text + " " + g_current_step + " / " + total_steps + bcolors.ENDC, flush=True)
+
+
+
+def add_cachyos_keyring(installation):
+	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
+	os.system(f"wget {cachyos_gpg_key_url}")
+	os.system(f"cp ./cachyos.gpg {installation.target}/usr/share/pacman/keyrings/cachyos.gpg")
+	commands = [
+		"gpg --import /usr/share/pacman/keyrings/cachyos.gpg",
+		"pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg",
+		"pacman-key --finger C3C4820857F654FE",
+		"pacman-key --lsign-key C3C4820857F654FE",
+		"pacman-key --finger 49B94AEF35812D6C",
+		"pacman-key --lsign-key 49B94AEF35812D6C",
+		"pacman-key --populate"
+	]
+	run_custom_user_commands(commands, installation)
+
+def add_cachyos_repo(installation):
+	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
+	commands = [
+		'echo -e "\n[cachyos]\nSigLevel = Optional TrustAll\nServer = https://cachyos.github.io/cachyos_repo/x86_64" >> /etc/pacman.conf',
+		"pacman -Sy"
+	]
+	run_custom_user_commands(commands, installation)
+
+def install_cachyos_packages(installation):
+	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
+	commands = ["pacman --noconfirm -S " + cachyos_packages]
+	run_custom_user_commands(commands, installation)
+
+def update_bootloader(installation):
+	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
+	commands = []
+	if archinstall.arguments["bootloader"] != "grub-install":
+		commands = ["sudo bootctl install"]
+	else:
+		commands = ["grub-mkconfig -o /boot/grub/grub.cfg"]
+	run_custom_user_commands(commands, installation)
+
+def run_cachyos_commands(installation):
+	print_separator()
+	print(f"{bcolors.GRAY}Running CachyOS Setup...\n{bcolors.ENDC}")
+	add_cachyos_keyring(installation)
+	add_cachyos_repo(installation)
+	install_cachyos_packages(installation)
+	update_bootloader(installation)
 
 def ask_user_questions():
 	"""
@@ -284,13 +335,13 @@ def ask_user_questions():
 	archinstall.arguments['users'] = {}
 	archinstall.arguments['superusers'] = {}
 	if not archinstall.arguments.get('!root-password', None):
-		# print_separator()
 		archinstall.arguments['superusers'] = archinstall.ask_for_superuser_account('Enter a username (required super-user with sudo privileges): ', forced=True)
 
-	print_separator()
-	users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
-	archinstall.arguments['users'] = users
-	archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
+	else:
+		print_separator()
+		users, superusers = archinstall.ask_for_additional_users('Enter a username to create a additional user (leave blank to skip & continue): ')
+		archinstall.arguments['users'] = users
+		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 	print_separator("5")
 	# Ask for archinstall-specific profiles (such as desktop environments etc)
@@ -319,42 +370,21 @@ def ask_user_questions():
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
 		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-		archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+		# archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
+		archinstall.arguments['kernels'] = ["linux"]
 
-	print()
-	print_separator("7")
-	# Additional packages (with some light weight error handling for invalid package names)
-	print("Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed.")
-	print("If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt.")
-	while True:
-		if not archinstall.arguments.get('packages', None):
-			archinstall.arguments['packages'] = [package for package in input('Write additional packages to install (space separated, leave blank to skip): ').split(' ') if len(package)]
-
-		if len(archinstall.arguments['packages']):
-			# Verify packages that were given
-			try:
-				archinstall.log("Verifying that additional packages exist (this might take a few seconds)")
-				archinstall.validate_package_list(archinstall.arguments['packages'])
-				break
-			except archinstall.RequirementError as e:
-				archinstall.log(e, fg='red')
-				archinstall.arguments['packages'] = None  # Clear the packages to trigger a new input question
-		else:
-			# no additional packages were selected, which we'll allow
-			break
-
-	print_separator("8")
+	print_separator("6")
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
 		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
 		if not archinstall.arguments['nic']:
 			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
 
-	print_separator("9")
+	print_separator("7")
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
-	print_separator("10")
+	print_separator("8")
 	if archinstall.arguments['timezone']:
 		if not archinstall.arguments.get('ntp', False):
 			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
@@ -367,9 +397,6 @@ def perform_installation_steps():
 	print('This is your chosen configuration:')
 	archinstall.log("-- Guided template chosen (with below config) --", level=logging.DEBUG)
 	user_configuration = json.dumps(archinstall.arguments, indent=4, sort_keys=True, cls=archinstall.JSON)
-	# with open("/var/log/archinstall/user_configuration.temp.json", "w") as config_file:
-		# config_file.write(user_configuration)
-	# archinstall.log(user_configuration, level=logging.INFO)
 	with open("/var/log/archinstall/user_configuration.json", "w") as config_file:
 		config_file.write(user_configuration)
 
@@ -387,7 +414,6 @@ def perform_installation_steps():
 
 	if archinstall.arguments.get('harddrive', None):
 		print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
-		archinstall.do_countdown()
 
 		"""
 			Setup the blockdevice, filesystem (and optionally encryption).
@@ -527,14 +553,8 @@ def perform_installation(mountpoint):
 		if archinstall.arguments.get('custom-commands', None):
 			run_custom_user_commands(archinstall.arguments['custom-commands'], installation)
 
-		installation.log("For post-installation tips, see https://wiki.archlinux.org/index.php/Installation_guide#Post-installation", fg="yellow")
-		if not archinstall.arguments.get('silent'):
-			choice = input("Would you like to chroot into the newly created installation and perform post-installation configuration? [Y/n] ")
-			if choice.lower() in ("y", ""):
-				try:
-					installation.drop_to_shell()
-				except:
-					pass
+		# Add cachyos keyring and install cachy packages
+		run_cachyos_commands(installation)
 
 	# For support reasons, we'll log the disk layout post installation (crash or no crash)
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
