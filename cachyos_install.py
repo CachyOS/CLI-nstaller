@@ -169,6 +169,18 @@ def run_cachyos_commands(installation):
 	install_cachyos_packages(installation)
 	update_bootloader(installation)
 
+
+def cachy_ask_for_main_filesystem_format():
+	options = {
+		'xfs': 'xfs',
+		'btrfs': 'btrfs',
+		'ext4': 'ext4',
+		'f2fs': 'f2fs'
+	}
+
+	value = archinstall.generic_select(options, "Select which filesystem your main partition should use (by number or name, default is xfs): ", allow_empty_input=True)
+	return next((key for key, val in options.items() if val == value), None)
+
 def ask_user_questions():
 	"""
 		First, we'll ask the user for a bunch of user input.
@@ -312,7 +324,7 @@ def ask_user_questions():
 		elif option == 'format-all':
 			if not archinstall.arguments.get('filesystem', None):
 				print_separator()
-				archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+				archinstall.arguments['filesystem'] = cachy_ask_for_main_filesystem_format()
 				if not archinstall.arguments.get('filesystem', None):
 					archinstall.arguments['filesystem'] = "xfs"
 			archinstall.arguments['harddrive'].keep_partitions = False
@@ -321,7 +333,7 @@ def ask_user_questions():
 		# and ask the user for a root filesystem.
 		if not archinstall.arguments.get('filesystem', None):
 			print_separator()
-			archinstall.arguments['filesystem'] = archinstall.ask_for_main_filesystem_format()
+			archinstall.arguments['filesystem'] = cachy_ask_for_main_filesystem_format()
 			if not archinstall.arguments.get('filesystem', None):
 				archinstall.arguments['filesystem'] = "xfs"
 		archinstall.arguments['harddrive'].keep_partitions = False
