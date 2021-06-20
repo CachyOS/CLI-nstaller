@@ -63,7 +63,7 @@ def show_iwctl():
 	input("Press Enter to continue to iwctl...")
 	os.system("iwctl")
 
-def check_internet_connectivity():
+def check_internet_connectivity(nr_tries=1):
 	print("\nChecking internet connectivity...")
 
 	conn = httplib.HTTPConnection("www.google.com", timeout=5)
@@ -73,6 +73,13 @@ def check_internet_connectivity():
 		archinstall.log("Connected to the Internet (OK)", fg="green")
 	except:
 		conn.close()
+		if nr_tries == 1:
+			nr_tries = 2
+			print(bcolors.YELLOW + "It seems not connected! Waiting for 10s before trying again..." + bcolors.ENDC)
+			time.sleep(10)
+			check_internet_connectivity(nr_tries)
+			return
+
 		archinstall.log("Not connected to the Internet!, please check!", fg="red")
 		print(bcolors.YELLOW + "In case you are using wifi, do you want to connect to wifi? (y/n): " + bcolors.ENDC, end="")
 		r = input()
