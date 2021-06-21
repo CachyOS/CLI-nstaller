@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import subprocess
+import sys
 
 try:
 	import httplib
@@ -17,6 +18,7 @@ from archinstall.lib.profiles import Profile
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cacule-headers linux-cacule cachyos-installer"
+cachy_offline = False
 
 class bcolors:
 	HEADER = '\033[95m'
@@ -39,6 +41,11 @@ if archinstall.arguments.get('help'):
 if os.getuid() != 0:
 	print("Archinstall requires root privileges to run. See --help for more.")
 	exit(1)
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "--semi-offline":
+	cachy_offline = True
+	print(bcolors.GRAY + "mode: " + sys.argv[1] + bcolors.ENDC)
 
 def print_cachyos_banner():
 	cachyos_banner = subprocess.run(['figlet', '     CachyOS'], stdout=subprocess.PIPE)
@@ -149,8 +156,11 @@ def add_cachyos_repo(installation):
 
 def install_cachyos_packages(installation):
 	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
-	commands = ["pacman --noconfirm -S " + cachyos_packages]
-	run_custom_user_commands(commands, installation)
+	if cachy_offline:
+		os.system(f"pacstrap {installation.target} {cachyos_packages}")
+	else:
+		commands = ["pacman --noconfirm -S " + cachyos_packages]
+		run_custom_user_commands(commands, installation)
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
