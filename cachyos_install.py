@@ -552,6 +552,9 @@ def perform_installation(mountpoint):
 			if archinstall.arguments.get('profile', None):
 				installation.install_profile(archinstall.arguments.get('profile', None))
 
+			# copy /etc/skel before creating users
+			os.system(f"cp -rT /etc/skel {installation.target}/etc/skel")
+
 			for user, user_info in archinstall.arguments.get('users', {}).items():
 				installation.user_create(user, user_info["!password"], sudo=False)
 
