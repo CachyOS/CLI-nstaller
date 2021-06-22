@@ -16,9 +16,34 @@ from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
-cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cacule-headers linux-cacule cachyos-installer"
 cachy_offline = False
+
+cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
+cachyos_packages = "linux-cacule-headers linux-cacule "
+cachyos_kde_theme = "cachyos-kde-theme "
+
+minimum_kde_packages = "xorg plasma-desktop plasma-framework plasma-nm plasma-pa "
+minimum_kde_packages += "konsole kate dolphin sddm sddm-kcm plasma-wayland-session egl-wayland "
+
+rec_kde_packages = "bluedevil drkonqi kde-gtk-config kdeplasma-addons khotkeys kinfocenter "
+rec_kde_packages += "kscreen ksshaskpass plasma-systemmonitor plasma-thunderbolt powerdevil "
+rec_kde_packages += "kwayland-integration kwallet-pam kgamma5 breeze-gtk xdg-desktop-portal-kde "
+rec_kde_packages += "gwenview okular spectacle dragon elisa ark gnome-calculator fish htop tree "
+
+full_kde_packages = "plasma-meta kde-applications-meta "
+
+# Browsers
+browser = "firefox "
+
+# Graphics Drivers
+Xorg_Intel_pa = "xf86-video-intel "
+Nouveau_pa = "xf86-video-nouveau "
+Xorg_amdgpu_pa = "xf86-video-amdgpu "
+Xorg_vmware_pa = "xf86-video-vmare "
+Xorg_ati_pa = "xf86-video-ati "
+Xorg_vesa_pa = "xf86-video-vesa "
+Xorg_Openchrome_pa = "xf86-video-openchrome "
+Nvidia_pa = "nvidia nvidia-settings nvidia-utils "
 
 class bcolors:
 	HEADER = '\033[95m'
@@ -113,7 +138,7 @@ print_margin()
 archinstall.log(f"Disk states before installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 separator_text = ""
-total_steps = "8"
+total_steps = "9"
 g_current_step = ""
 def print_separator(current_step = ""):
 	global separator_text
@@ -156,6 +181,48 @@ def add_cachyos_repo(installation):
 
 def install_cachyos_packages(installation):
 	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
+	global cachyos_packages
+
+	# check if kde is selected
+	ins_sel = archinstall.arguments.get('installation_selection', None)
+	if ins_sel:
+		if ins_sel == "minimam KDE" or ins_sel == "moderated KDE" or ins_sel == "full KDE":
+			cachyos_packages += cachyos_kde_theme
+		if ins_sel == "minimam KDE":
+			cachyos_packages += minimum_kde_packages
+		if ins_sel == "moderated KDE":
+			cachyos_packages += rec_kde_packages
+		if ins_sel == "full KDE":
+			cachyos_packages += full_kde_packages
+
+	# add browser
+	cachyos_packages += browser
+
+	# add ucode
+	if archinstall.arguments.get("ucode", None):
+		cachyos_packages += archinstall.arguments["ucode"] + " "
+
+	# add graphics driver
+	if archinstall.arguments.get("graphics_driver", None):
+		graphics_driver = archinstall.arguments["graphics_driver"]
+
+		if graphics_driver == "Xorg Intel":
+			cachyos_packages += Xorg_Intel_pa
+		elif graphics_driver == "Nouveau":
+			cachyos_packages += Nouveau_pa
+		elif graphics_driver == "Xorg AMD":
+			cachyos_packages += Xorg_amdgpu_pa
+		elif graphics_driver == "Xorg vmware":
+			cachyos_packages += Xorg_vmware_pa
+		elif graphics_driver == "Xorg ati":
+			cachyos_packages += Xorg_ati_pa
+		elif graphics_driver == "Xorg vesa":
+			cachyos_packages += Xorg_vesa_pa
+		elif graphics_driver == "Xorg Openchrome":
+			cachyos_packages += Xorg_Openchrome_pa
+		elif graphics_driver == "Xorg Nvidia":
+			cachyos_packages += Nvidia_pa
+
 	if cachy_offline:
 		os.system(f"pacstrap {installation.target} {cachyos_packages}")
 	else:
@@ -243,12 +310,12 @@ def ask_user_questions():
 		if archinstall.arguments['harddrive'] is None:
 			archinstall.arguments['target-mount'] = archinstall.storage.get('MOUNT_POINT', '/mnt')
 
-	print_separator()
 	# Perform a quick sanity check on the selected harddrive.
 	# 1. Check if it has partitions
 	# 3. Check that we support the current partitions
 	# 2. If so, ask if we should keep them or wipe everything
 	if archinstall.arguments['harddrive'] and archinstall.arguments['harddrive'].has_partitions():
+		print_separator()
 		archinstall.log(f"{archinstall.arguments['harddrive']} contains the following partitions:", fg='yellow')
 
 		# We curate a list pf supported partitions
@@ -377,14 +444,40 @@ def ask_user_questions():
 		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 	print_separator("5")
-	# Ask for archinstall-specific profiles (such as desktop environments etc)
-	if not archinstall.arguments.get('profile', None):
-		archinstall.arguments['profile'] = archinstall.select_profile()
+	print("1- minimum installation (no desktop)")
+	print("2- minimam KDE plasma desktop")
+	print("3- moderated KDE plasma desktop (default, recommended)")
+	print("4- full KDE plasma desktop")
+	print("5- other options")
+	answer = input("Select installation (1, 2, 3, 4, or 5): ")
+	desktop_env = False
+
+	if answer == "1":
+		archinstall.arguments["installation_selection"] = "minimum"
+	elif answer == "2":
+		archinstall.arguments["installation_selection"] = "minimam KDE"
+		desktop_env = True;
+	elif answer == "3":
+		archinstall.arguments["installation_selection"] = "moderated KDE"
+		desktop_env = True;
+	elif answer == "4":
+		archinstall.arguments["installation_selection"] = "full KDE"
+		desktop_env = True;
+	elif answer == "5":
+		pass
 	else:
-		archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
+		archinstall.arguments["installation_selection"] = "moderated KDE"
+		desktop_env = True;
+
+	if not archinstall.arguments.get('installation_selection', None):
+		# Ask for archinstall-specific profiles (such as desktop environments etc)
+		if not archinstall.arguments.get('profile', None):
+			archinstall.arguments['profile'] = archinstall.select_profile()
+		else:
+			archinstall.arguments['profile'] = Profile(installer=None, path=archinstall.arguments['profile'])
 
 	# Check the potentially selected profiles preparations to get early checks if some additional questions are needed.
-	if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_prep_function():
+	if archinstall.arguments.get('profile', None) and archinstall.arguments['profile'].has_prep_function():
 		with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 			if not imported._prep_function():
 				archinstall.log(' * Profile\'s preparation requirements was not fulfilled.', fg='red')
@@ -392,8 +485,9 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
+		print_separator()
 		# only ask for audio server selection on a desktop profile
-		if str(archinstall.arguments['profile']) == 'Profile(desktop)':
+		if desktop_env or str(archinstall.arguments['profile']) == 'Profile(desktop)':
 			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
 		else:
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
@@ -402,22 +496,65 @@ def ask_user_questions():
 
 	# Ask for preferred kernel:
 	if not archinstall.arguments.get("kernels", None):
-		kernels = ["linux", "linux-lts", "linux-zen", "linux-hardened"]
-		# archinstall.arguments['kernels'] = archinstall.select_kernel(kernels)
 		archinstall.arguments['kernels'] = ["linux"]
 
 	print_separator("6")
+	# ask for ucode
+	# detect cpu
+	cpu = ""
+	d_cpu = subprocess.check_output("lscpu | grep Vendor | uniq | awk '{print $3}'", shell=True)
+	d_cpu = d_cpu.decode(sys.stdout.encoding).strip()
+	print("CPU vendor detection...")
+	if d_cpu == "GenuineIntel":
+		cpu = "intel"
+	elif d_cpu == "AuthenticAMD":
+		cpu = "amd"
+
+	print("Vendor: " + d_cpu)
+	if d_cpu:
+		answer = input(f"it seems you are running on an {cpu} machine, install {cpu}-ucode? (Y/n): ")
+		if not answer or answer.lower() == "y":
+			archinstall.arguments["ucode"] = cpu + "-ucode"
+
 	# Ask or Call the helper function that asks the user to optionally configure a network.
 	if not archinstall.arguments.get('nic', None):
-		archinstall.arguments['nic'] = archinstall.ask_to_configure_network()
-		if not archinstall.arguments['nic']:
-			archinstall.log("No network configuration was selected. Network is going to be unavailable until configured manually!", fg="yellow")
+		archinstall.arguments['nic'] = {'nic': 'Use NetworkManager to control and manage your internet connection', 'NetworkManager': True}
 
+	# Graphics Drivers
 	print_separator("7")
+	print("Graphics Drivers:")
+	print("1- X.org Intel: i810/i830/i915/945G/G965+ video drivers")
+	print("2- Nouveau: Open Source 3D acceleration driver for nVidia cards")
+	print("3- X.org AMD: amdgpu video driver")
+	print("4- X.org vmware video driver")
+	print("5- X.org ati video driver")
+	print("6- X.org vesa video driver")
+	print("7- X.Org Openchrome drivers")
+	print("8- NVIDIA drivers for linux")
+	answer = input("Select driver 1, 2, 3, ... 8 (leave blank to skip): ")
+
+	if answer == "1":
+		archinstall.arguments["graphics_driver"] = "Xorg Intel"
+	elif answer == "2":
+		archinstall.arguments["graphics_driver"] = "Nouveau"
+	elif answer == "3":
+		archinstall.arguments["graphics_driver"] = "Xorg AMD"
+	elif answer == "4":
+		archinstall.arguments["graphics_driver"] = "Xorg vmware"
+	elif answer == "5":
+		archinstall.arguments["graphics_driver"] = "Xorg ati"
+	elif answer == "6":
+		archinstall.arguments["graphics_driver"] = "Xorg vesa"
+	elif answer == "7":
+		archinstall.arguments["graphics_driver"] = "Xorg Openchrome"
+	elif answer == "8":
+		archinstall.arguments["graphics_driver"] = "Xorg Nvidia"
+
+	print_separator("8")
 	if not archinstall.arguments.get('timezone', None):
 		archinstall.arguments['timezone'] = archinstall.ask_for_a_timezone()
 
-	print_separator("8")
+	print_separator("9")
 	if archinstall.arguments['timezone']:
 		if not archinstall.arguments.get('ntp', False):
 			archinstall.arguments['ntp'] = input("Would you like to use automatic time synchronization (NTP) with the default time servers? [Y/n]: ").strip().lower() in ('y', 'yes', '')
@@ -574,7 +711,7 @@ def perform_installation(mountpoint):
 			# After which, this step will set the language both for console and x11 if x11 was installed for instance.
 			installation.set_keyboard_language(archinstall.arguments['keyboard-language'])
 
-			if archinstall.arguments['profile'] and archinstall.arguments['profile'].has_post_install():
+			if archinstall.arguments.get('profile', None) and archinstall.arguments['profile'].has_post_install():
 				with archinstall.arguments['profile'].load_instructions(namespace=f"{archinstall.arguments['profile'].namespace}.py") as imported:
 					if not imported._post_install():
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
