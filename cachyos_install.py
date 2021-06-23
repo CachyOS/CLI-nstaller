@@ -19,7 +19,7 @@ from archinstall.lib.profiles import Profile
 cachy_offline = False
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cacule-headers linux-cacule "
+cachyos_packages = "linux-cachyos linux-cachyos-headers "
 cachyos_kde_theme = "cachyos-kde-theme "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
