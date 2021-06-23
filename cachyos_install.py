@@ -285,9 +285,11 @@ def cachy_ask_for_main_filesystem_format():
 	return next((key for key, val in options.items() if val == value), None)
 
 def set_permissions(installation):
-	for user, user_info in archinstall.arguments.get('users', {}).items():
-		command = [f"chmod +x /home/{user}/.local/bin/set-cachy-theme.sh"]
-		run_custom_user_commands(command, installation)
+	commands = []
+	for user, user_info in archinstall.arguments.get('superusers', {}).items():
+		commands = commands + [f"chmod +x /home/{user}/.local/bin/set-cachy-theme.sh"]
+
+	run_custom_user_commands(commands, installation)
 
 def ask_user_questions():
 	"""
@@ -518,7 +520,7 @@ def ask_user_questions():
 	if not archinstall.arguments.get('audio', None):
 		print_separator()
 		# only ask for audio server selection on a desktop profile
-		if desktop_env or str(archinstall.arguments['profile']) == 'Profile(desktop)':
+		if desktop_env or (archinstall.arguments.get('profile', None) and str(archinstall.arguments['profile']) == 'Profile(desktop)'):
 			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
 		else:
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
