@@ -22,28 +22,32 @@ cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/maste
 cachyos_packages = "linux-cacule-headers linux-cacule "
 cachyos_kde_theme = "cachyos-kde-theme "
 
-minimum_kde_packages = "xorg plasma-desktop plasma-framework plasma-nm plasma-pa "
-minimum_kde_packages += "konsole kate dolphin sddm sddm-kcm plasma-wayland-session egl-wayland "
+minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
+			"konsole", "kate", "dolphin", "sddm", "sddm-kcm"]
 
-rec_kde_packages = "bluedevil drkonqi kde-gtk-config kdeplasma-addons khotkeys kinfocenter "
-rec_kde_packages += "kscreen ksshaskpass plasma-systemmonitor plasma-thunderbolt powerdevil "
-rec_kde_packages += "kwayland-integration kwallet-pam kgamma5 breeze-gtk xdg-desktop-portal-kde "
-rec_kde_packages += "gwenview okular spectacle dragon elisa ark gnome-calculator fish htop tree "
+rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
+			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
+			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
+			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
+			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
+			"dragon", "elisa", "ark", "gnome-calculator", "fish", "htop",
+			"tree"]
 
-full_kde_packages = "plasma-meta kde-applications-meta "
+full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = "firefox "
+browser = ["firefox"]
+# browser = [""]
 
 # Graphics Drivers
-Xorg_Intel_pa = "xf86-video-intel "
-Nouveau_pa = "xf86-video-nouveau "
-Xorg_amdgpu_pa = "xf86-video-amdgpu "
-Xorg_vmware_pa = "xf86-video-vmare "
-Xorg_ati_pa = "xf86-video-ati "
-Xorg_vesa_pa = "xf86-video-vesa "
-Xorg_Openchrome_pa = "xf86-video-openchrome "
-Nvidia_pa = "nvidia nvidia-settings nvidia-utils "
+Xorg_Intel_pa = ["xf86-video-intel"]
+Nouveau_pa = ["xf86-video-nouveau"]
+Xorg_amdgpu_pa = ["xf86-video-amdgpu"]
+Xorg_vmware_pa = ["xf86-video-vmare"]
+Xorg_ati_pa = ["xf86-video-ati"]
+Xorg_vesa_pa = ["xf86-video-vesa"]
+Xorg_Openchrome_pa = ["xf86-video-openchrome"]
+Nvidia_pa = ["nvidia", "nvidia-settings", "nvidia-utils"]
 
 class bcolors:
 	HEADER = '\033[95m'
@@ -175,53 +179,75 @@ def add_cachyos_repo(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
 	commands = [
 		'echo -e "\n[cachyos]\nSigLevel = Optional TrustAll\nServer = https://cachyos.github.io/cachyos_repo/x86_64" >> /etc/pacman.conf',
-		"pacman -Sy"
+		'pacman --noconfirm -Sy'
 	]
 	run_custom_user_commands(commands, installation)
 
-def install_cachyos_packages(installation):
-	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
+def enable_services(installation):
+	# check if kde is selected
+	ins_sel = archinstall.arguments.get('installation_selection', None)
+	if ins_sel and (ins_sel == "minimam KDE" or 
+			ins_sel == "moderated KDE" or ins_sel == "full KDE"):
+		try:
+			# add sddm service if kde is isntalled
+			installation.enable_service("sddm.service")
+			# add NetworkManager service if kde is isntalled
+			installation.enable_service("NetworkManager.service")
+		except:
+			pass
+
+
+def install_selected_packages(installation):
 	global cachyos_packages
+	other_packages = []
 
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
 	if ins_sel:
 		if ins_sel == "minimam KDE" or ins_sel == "moderated KDE" or ins_sel == "full KDE":
 			cachyos_packages += cachyos_kde_theme
-		if ins_sel == "minimam KDE":
-			cachyos_packages += minimum_kde_packages
-		if ins_sel == "moderated KDE":
-			cachyos_packages += rec_kde_packages
-		if ins_sel == "full KDE":
-			cachyos_packages += full_kde_packages
 
-	# add browser
-	cachyos_packages += browser
+		if ins_sel == "minimam KDE":
+			installation.add_additional_packages(minimum_kde_packages)
+		if ins_sel == "moderated KDE":
+			installation.add_additional_packages(minimum_kde_packages)
+			installation.add_additional_packages(rec_kde_packages)
+			other_packages = other_packages + browser
+		if ins_sel == "full KDE":
+			installation.add_additional_packages(minimum_kde_packages)
+			installation.add_additional_packages(rec_kde_packages)
+			installation.add_additional_packages(full_kde_packages)
+			other_packages = other_packages + browser
 
 	# add ucode
 	if archinstall.arguments.get("ucode", None):
-		cachyos_packages += archinstall.arguments["ucode"] + " "
+		other_packages = other_packages + [archinstall.arguments["ucode"]]
 
 	# add graphics driver
 	if archinstall.arguments.get("graphics_driver", None):
 		graphics_driver = archinstall.arguments["graphics_driver"]
 
 		if graphics_driver == "Xorg Intel":
-			cachyos_packages += Xorg_Intel_pa
+			other_packages = other_packages + Xorg_Intel_pa
 		elif graphics_driver == "Nouveau":
-			cachyos_packages += Nouveau_pa
+			other_packages = other_packages + Nouveau_pa
 		elif graphics_driver == "Xorg AMD":
-			cachyos_packages += Xorg_amdgpu_pa
+			other_packages = other_packages + Xorg_amdgpu_pa
 		elif graphics_driver == "Xorg vmware":
-			cachyos_packages += Xorg_vmware_pa
+			other_packages = other_packages + Xorg_vmware_pa
 		elif graphics_driver == "Xorg ati":
-			cachyos_packages += Xorg_ati_pa
+			other_packages = other_packages + Xorg_ati_pa
 		elif graphics_driver == "Xorg vesa":
-			cachyos_packages += Xorg_vesa_pa
+			other_packages = other_packages + Xorg_vesa_pa
 		elif graphics_driver == "Xorg Openchrome":
-			cachyos_packages += Xorg_Openchrome_pa
+			other_packages = other_packages + Xorg_Openchrome_pa
 		elif graphics_driver == "Xorg Nvidia":
-			cachyos_packages += Nvidia_pa
+			other_packages = other_packages + Nvidia_pa
+
+	installation.add_additional_packages(other_packages)
+
+def install_cachyos_packages(installation):
+	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
 
 	if cachy_offline:
 		os.system(f"pacstrap {installation.target} {cachyos_packages}")
@@ -231,11 +257,11 @@ def install_cachyos_packages(installation):
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
-	commands = []
+	commands = ["pacman --noconfirm -R linux"]
 	if archinstall.arguments["bootloader"] != "grub-install":
-		commands = ["sudo bootctl install"]
+		commands = commands + ["sudo bootctl install"]
 	else:
-		commands = ["grub-mkconfig -o /boot/grub/grub.cfg"]
+		commands = commands + ["grub-mkconfig -o /boot/grub/grub.cfg"]
 	run_custom_user_commands(commands, installation)
 
 def run_cachyos_commands(installation):
@@ -257,6 +283,11 @@ def cachy_ask_for_main_filesystem_format():
 
 	value = archinstall.generic_select(options, "Select which filesystem your main partition should use (by number or name, default is xfs): ", allow_empty_input=True)
 	return next((key for key, val in options.items() if val == value), None)
+
+def set_permissions(installation):
+	for user, user_info in archinstall.arguments.get('users', {}).items():
+		command = [f"chmod +x /home/{user}/.local/bin/set-cachy-theme.sh"]
+		run_custom_user_commands(command, installation)
 
 def ask_user_questions():
 	"""
@@ -716,6 +747,20 @@ def perform_installation(mountpoint):
 					if not imported._post_install():
 						archinstall.log(' * Profile\'s post configuration requirements was not fulfilled.', fg='red')
 						exit(1)
+
+		# install kde if selected
+		install_selected_packages(installation)
+
+		# copy /etc/sddm.conf.d (maybe not needed when added to airootfs)
+		os.system(f"mkdir {installation.target}/etc/sddm.conf.d/")
+		os.system(f"touch {installation.target}/etc/sddm.conf")
+		os.system(f"cp /etc/sddm.conf.d/kde_settings.conf {installation.target}/etc/sddm.conf.d/")
+
+		# fixing files/folders permissions
+		set_permissions(installation)
+
+		# enable some services if kde is isntalled
+		enable_services(installation)
 
 		# If the user provided a list of services to be enabled, pass the list to the enable_service function.
 		# Note that while it's called enable_service, it can actually take a list of services and iterate it.
