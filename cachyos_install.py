@@ -244,7 +244,8 @@ def install_selected_packages(installation):
 		elif graphics_driver == "Xorg Nvidia":
 			other_packages = other_packages + Nvidia_pa
 
-	installation.add_additional_packages(other_packages)
+	if other_packages:
+		installation.add_additional_packages(other_packages)
 
 def install_cachyos_packages(installation):
 	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
