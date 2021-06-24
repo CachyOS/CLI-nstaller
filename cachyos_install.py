@@ -37,7 +37,8 @@ full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
 browser = ["firefox"]
-# browser = [""]
+
+essentials = ["vi", "nano"]
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
@@ -218,6 +219,9 @@ def install_selected_packages(installation):
 			installation.add_additional_packages(rec_kde_packages)
 			installation.add_additional_packages(full_kde_packages)
 			other_packages = other_packages + browser
+
+	# add essentials
+	other_packages = other_packages + essentials
 
 	# add ucode
 	if archinstall.arguments.get("ucode", None):
