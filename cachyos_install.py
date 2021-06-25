@@ -555,7 +555,7 @@ def ask_user_questions():
 	# ask for ucode
 	# detect cpu
 	cpu = ""
-	d_cpu = subprocess.check_output("lscpu | grep Vendor | uniq | awk '{print $3}'", shell=True)
+	d_cpu = subprocess.check_output("lscpu | grep \"^Vendor\" | uniq | awk '{print $3}'", shell=True)
 	d_cpu = d_cpu.decode(sys.stdout.encoding).strip()
 	print("CPU vendor detection...")
 	if d_cpu == "GenuineIntel":
