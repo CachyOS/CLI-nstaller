@@ -269,6 +269,10 @@ def update_bootloader(installation):
 		commands = commands + ["grub-mkconfig -o /boot/grub/grub.cfg"]
 	run_custom_user_commands(commands, installation)
 
+def setup_kde_plasma(installation):
+	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
+	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
+
 def run_cachyos_commands(installation):
 	print_separator()
 	print(f"{bcolors.GRAY}Running CachyOS Setup...\n{bcolors.ENDC}")
@@ -276,6 +280,9 @@ def run_cachyos_commands(installation):
 	add_cachyos_repo(installation)
 	install_cachyos_packages(installation)
 	update_bootloader(installation)
+
+	# other setups
+	setup_kde_plasma(installation)
 
 
 def cachy_ask_for_main_filesystem_format():
