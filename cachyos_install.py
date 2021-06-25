@@ -31,7 +31,7 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
 			"dragon", "elisa", "ark", "gnome-calculator", "fish", "htop",
-			"tree"]
+			"tree", "bash-completion"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
