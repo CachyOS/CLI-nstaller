@@ -273,12 +273,20 @@ def setup_kde_plasma(installation):
 	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
 	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
 
+def setup_grub_dist_name(installation):
+	_file = f"/{installation.target}/etc/default/grub"
+	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
+
 def run_cachyos_commands(installation):
 	print_separator()
 	print(f"{bcolors.GRAY}Running CachyOS Setup...\n{bcolors.ENDC}")
 	add_cachyos_keyring(installation)
 	add_cachyos_repo(installation)
 	install_cachyos_packages(installation)
+
+	# grub
+	setup_grub_dist_name(installation)
+
 	update_bootloader(installation)
 
 	# other setups
