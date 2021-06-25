@@ -564,7 +564,7 @@ def ask_user_questions():
 		cpu = "amd"
 
 	print("Vendor: " + d_cpu)
-	if d_cpu:
+	if cpu:
 		answer = input(f"it seems you are running on an {cpu} machine, install {cpu}-ucode? (Y/n): ")
 		if not answer or answer.lower() == "y":
 			archinstall.arguments["ucode"] = cpu + "-ucode"
