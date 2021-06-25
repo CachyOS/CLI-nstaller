@@ -23,7 +23,7 @@ cachyos_packages = "linux-cachyos linux-cachyos-headers "
 cachyos_kde_theme = "cachyos-kde-theme "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
-			"konsole", "kate", "dolphin", "sddm", "sddm-kcm"]
+			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans"]
 
 rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
 			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
