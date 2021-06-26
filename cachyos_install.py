@@ -18,6 +18,8 @@ from archinstall.lib.profiles import Profile
 
 cachy_offline = False
 
+essentials = ["vi", "nano", "fish", "bash-completion"]
+
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers "
 cachyos_kde_theme = "cachyos-kde-theme "
@@ -30,15 +32,13 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-			"dragon", "elisa", "ark", "gnome-calculator", "fish", "htop",
-			"tree", "bash-completion"]
+			"dragon", "elisa", "ark", "gnome-calculator", "htop",
+			"tree"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
 browser = ["firefox"]
-
-essentials = ["vi", "nano"]
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
@@ -273,6 +273,13 @@ def setup_kde_plasma(installation):
 	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
 	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
 
+def fish_as_default(installation):
+	commands = []
+	for user, user_info in archinstall.arguments.get('superusers', {}).items():
+		commands = commands + [f"usermod --shell $(which fish) {user}"]
+
+	run_custom_user_commands(commands, installation)
+
 def setup_grub_dist_name(installation):
 	_file = f"/{installation.target}/etc/default/grub"
 	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
@@ -291,6 +298,7 @@ def run_cachyos_commands(installation):
 
 	# other setups
 	setup_kde_plasma(installation)
+	fish_as_default(installation)
 
 
 def cachy_ask_for_main_filesystem_format():
