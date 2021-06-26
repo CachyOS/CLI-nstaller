@@ -281,6 +281,14 @@ def fish_as_default(installation):
 
 	run_custom_user_commands(commands, installation)
 
+def tweak_conf_files(installation):
+	paconf = f"/{installation.target}/etc/pacman.conf"
+	mkconf = f"/{installation.target}/etc/makepkg.conf"
+
+	os.system(f"sed -i 's/#Color/Color\\n#ILoveCandy/' {paconf}")
+	os.system(f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
+	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
+
 def setup_grub_dist_name(installation):
 	_file = f"/{installation.target}/etc/default/grub"
 	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
@@ -300,6 +308,7 @@ def run_cachyos_commands(installation):
 	# other setups
 	setup_kde_plasma(installation)
 	fish_as_default(installation)
+	tweak_conf_files(installation)
 
 
 def cachy_ask_for_main_filesystem_format():
