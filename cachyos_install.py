@@ -274,6 +274,10 @@ def setup_kde_plasma(installation):
 	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
 	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
 
+	for user, user_info in archinstall.arguments.get('superusers', {}).items():
+		_file = f"/{installation.target}/home/{user}/.config/dolphinrc"
+		os.system(f"echo -e \"\n[MainWindow][Toolbar mainToolBar]\nToolButtonStyle=IconOnly\n\" >> {_file}")
+
 def fish_as_default(installation):
 	commands = []
 	for user, user_info in archinstall.arguments.get('superusers', {}).items():
