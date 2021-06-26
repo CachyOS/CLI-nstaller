@@ -178,8 +178,9 @@ def add_cachyos_keyring(installation):
 
 def add_cachyos_repo(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
+	_file = "/etc/pacman.conf"
 	commands = [
-		'echo -e "\n[cachyos]\nSigLevel = Optional TrustAll\nServer = https://cachyos.github.io/cachyos_repo/x86_64" >> /etc/pacman.conf',
+		"sed -i 's/\[core\]/\[cachyos\]\\nSigLevel = Optional TrustAll\\nServer = https:\/\/cachyos.github.io\/cachyos_repo\/x86_64\\n\\n\[core\]/' " + _file,
 		'pacman --noconfirm -Sy'
 	]
 	run_custom_user_commands(commands, installation)
