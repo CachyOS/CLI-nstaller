@@ -636,7 +636,7 @@ def perform_installation_steps():
 	"""
 
 	if archinstall.arguments.get('harddrive', None):
-		print(f" ! Formatting {archinstall.arguments['harddrive']} in ", end='')
+		print(f" ! Formatting {archinstall.arguments['harddrive']} in ")
 
 		"""
 			Setup the blockdevice, filesystem (and optionally encryption).
@@ -645,6 +645,20 @@ def perform_installation_steps():
 		mode = archinstall.GPT
 		if has_uefi() is False:
 			mode = archinstall.MBR
+
+		if archinstall.arguments['harddrive'].keep_partitions is False:
+			# umount partitions in case they are mounted before
+			for partition in archinstall.arguments['harddrive']:
+				print(f"umount {partition.path}")
+				os.system(f"umount {partition.path}")
+
+			# wipe entire disk
+			_disk = archinstall.arguments['harddrive'].path
+			os.system(f"umount {_disk}")
+			print(f"sfdisk --delete {_disk}")
+			os.system("sfdisk --delete " + _disk)
+			archinstall.arguments['harddrive'].flush_cache()
+
 		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
 			# Wipe the entire drive if the disk flag `keep_partitions`is False.
 			if archinstall.arguments['harddrive'].keep_partitions is False:
