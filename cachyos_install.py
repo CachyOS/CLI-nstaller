@@ -546,9 +546,9 @@ def ask_user_questions():
 
 	# Ask about audio server selection if one is not already set
 	if not archinstall.arguments.get('audio', None):
-		print_separator()
 		# only ask for audio server selection on a desktop profile
 		if desktop_env or (archinstall.arguments.get('profile', None) and str(archinstall.arguments['profile']) == 'Profile(desktop)'):
+			print_separator()
 			archinstall.arguments['audio'] = archinstall.ask_for_audio_selection()
 		else:
 			# packages installed by a profile may depend on audio and something may get installed anyways, not much we can do about that.
