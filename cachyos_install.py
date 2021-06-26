@@ -646,7 +646,7 @@ def perform_installation_steps():
 		if has_uefi() is False:
 			mode = archinstall.MBR
 
-		if archinstall.arguments['harddrive'].keep_partitions is False:
+		if has_uefi() is False and archinstall.arguments['harddrive'].keep_partitions is False:
 			# umount partitions in case they are mounted before
 			for partition in archinstall.arguments['harddrive']:
 				print(f"umount {partition.path}")
