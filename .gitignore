@@ -4,4 +4,4 @@
 .PKGINFO
 pkg/
 src/
-cp_to_shared.sh
+cp_to_temp.sh
