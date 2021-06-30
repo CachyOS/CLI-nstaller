@@ -12,7 +12,8 @@ except:
 
 import archinstall
 from archinstall.lib.general import run_custom_user_commands
-from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
+# from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
+from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
 
@@ -261,11 +262,40 @@ def install_cachyos_packages(installation):
 		commands = ["pacman --noconfirm -S " + cachyos_packages]
 		run_custom_user_commands(commands, installation)
 
+def add_bootloader(installation, bootloader='systemd-bootctl'):
+	boot_partition = None
+	root_partition = None
+	for partition in archinstall.arguments['harddrive']:
+		if partition.mountpoint == installation.target + '/boot':
+			boot_partition = partition
+		elif partition.mountpoint == installation.target:
+			root_partition = partition
+
+	with open(f'{installation.target}/boot/loader/entries/cachyos.conf', 'w') as entry:
+		entry.write('title CachyOS Linux\n')
+		entry.write('linux /vmlinuz-linux-cachyos\n')
+		if not is_vm():
+			vendor = cpu_vendor()
+			if vendor == "AuthenticAMD":
+				entry.write("initrd /amd-ucode.img\n")
+			elif vendor == "GenuineIntel":
+				entry.write("initrd /intel-ucode.img\n")
+
+		entry.write('initrd /initramfs-linux-cachyos.img\n')
+
+		if real_device := installation.detect_encryption(root_partition):
+			archinstall.log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
+			entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(installation.KERNEL_PARAMS)}\n')
+		else:
+			archinstall.log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
+			entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(installation.KERNEL_PARAMS)}\n')
+
+
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
 	commands = ["pacman --noconfirm -R linux"]
-	if archinstall.arguments["bootloader"] != "grub-install":
-		commands = commands + ["sudo bootctl install"]
+	if archinstall.arguments["bootloader"] == "systemd-bootctl":
+		add_bootloader(installation)
 	else:
 		commands = commands + ["grub-mkconfig -o /boot/grub/grub.cfg"]
 	run_custom_user_commands(commands, installation)
@@ -636,6 +666,24 @@ def ask_user_questions():
 			if archinstall.arguments['ntp']:
 				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 
+def wipe_disk():
+	# umount partitions in case they are mounted before
+	for partition in archinstall.arguments['harddrive']:
+		print(f"umount {partition.path}")
+		os.system(f"umount -l {partition.path}")
+		os.system(f"umount -f {partition.path}")
+
+	# wipe entire disk
+	_disk = archinstall.arguments['harddrive'].path
+	os.system(f"umount -f {_disk}")
+	print(f"sfdisk --delete {_disk}")
+	os.system("sfdisk --delete " + _disk)
+
+	if has_uefi():
+		print("mkfs.vfat " + _disk)
+		os.system("mkfs.vfat " + _disk)
+
+	archinstall.arguments['harddrive'].flush_cache()
 
 def perform_installation_steps():
 	print()
@@ -668,18 +716,8 @@ def perform_installation_steps():
 		if has_uefi() is False:
 			mode = archinstall.MBR
 
-		if has_uefi() is False and archinstall.arguments['harddrive'].keep_partitions is False:
-			# umount partitions in case they are mounted before
-			for partition in archinstall.arguments['harddrive']:
-				print(f"umount {partition.path}")
-				os.system(f"umount {partition.path}")
-
-			# wipe entire disk
-			_disk = archinstall.arguments['harddrive'].path
-			os.system(f"umount {_disk}")
-			print(f"sfdisk --delete {_disk}")
-			os.system("sfdisk --delete " + _disk)
-			archinstall.arguments['harddrive'].flush_cache()
+		if archinstall.arguments['harddrive'].keep_partitions is False:
+			wipe_disk()
 
 		with archinstall.Filesystem(archinstall.arguments['harddrive'], mode) as fs:
 			# Wipe the entire drive if the disk flag `keep_partitions`is False.
