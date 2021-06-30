@@ -19,7 +19,7 @@ from archinstall.lib.profiles import Profile
 
 cachy_offline = False
 
-essentials = ["vi", "nano", "fish", "bash-completion"]
+essentials = ["vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers "
@@ -49,7 +49,7 @@ Xorg_vmware_pa = ["xf86-video-vmare"]
 Xorg_ati_pa = ["xf86-video-ati"]
 Xorg_vesa_pa = ["xf86-video-vesa"]
 Xorg_Openchrome_pa = ["xf86-video-openchrome"]
-Nvidia_pa = ["nvidia", "nvidia-settings", "nvidia-utils"]
+Nvidia_pa = ["nvidia", "nvidia-settings", "nvidia-utils", "nvidia-dkms", "dkms"]
 
 class bcolors:
 	HEADER = '\033[95m'
@@ -173,7 +173,10 @@ def add_cachyos_keyring(installation):
 		"pacman-key --lsign-key C3C4820857F654FE",
 		"pacman-key --finger 49B94AEF35812D6C",
 		"pacman-key --lsign-key 49B94AEF35812D6C",
+		"pacman-key --finger 4FF8FF1748568017C146718109D27738912724BE"
+		"pacman-key --lsign-key 4FF8FF1748568017C146718109D27738912724BE"
 		"pacman-key --populate"
+		"pacman-key --init"
 	]
 	run_custom_user_commands(commands, installation)
 
@@ -293,7 +296,7 @@ def add_bootloader(installation, bootloader='systemd-bootctl'):
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
-	commands = ["pacman --noconfirm -R linux"]
+	commands = ["pacman --noconfirm -S linux-headers"]
 	if archinstall.arguments["bootloader"] == "systemd-bootctl":
 		add_bootloader(installation)
 	else:
