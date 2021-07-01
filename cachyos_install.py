@@ -293,6 +293,9 @@ def add_bootloader(installation, bootloader='systemd-bootctl'):
 			archinstall.log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
 			entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(installation.KERNEL_PARAMS)}\n')
 
+def setup_grub_dist_name(installation):
+	_file = f"/{installation.target}/etc/default/grub"
+	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
@@ -300,6 +303,7 @@ def update_bootloader(installation):
 	if archinstall.arguments["bootloader"] == "systemd-bootctl":
 		add_bootloader(installation)
 	else:
+		setup_grub_dist_name(installation)
 		commands = commands + ["grub-mkconfig -o /boot/grub/grub.cfg"]
 	run_custom_user_commands(commands, installation)
 
@@ -326,19 +330,12 @@ def tweak_conf_files(installation):
 	os.system(f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
 	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
 
-def setup_grub_dist_name(installation):
-	_file = f"/{installation.target}/etc/default/grub"
-	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
-
 def run_cachyos_commands(installation):
 	print_separator()
 	print(f"{bcolors.GRAY}Running CachyOS Setup...\n{bcolors.ENDC}")
 	add_cachyos_keyring(installation)
 	add_cachyos_repo(installation)
 	install_cachyos_packages(installation)
-
-	# grub
-	setup_grub_dist_name(installation)
 
 	update_bootloader(installation)
 
