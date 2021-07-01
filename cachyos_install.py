@@ -19,7 +19,7 @@ from archinstall.lib.profiles import Profile
 
 cachy_offline = False
 
-essentials = ["vi", "nano", "fish", "bash-completion", "git"]
+essentials = ["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers "
@@ -205,7 +205,7 @@ def enable_services(installation):
 
 def install_selected_packages(installation):
 	global cachyos_packages
-	other_packages = []
+	other_packages = essentials
 
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
@@ -224,9 +224,6 @@ def install_selected_packages(installation):
 			installation.add_additional_packages(rec_kde_packages)
 			installation.add_additional_packages(full_kde_packages)
 			other_packages = other_packages + browser
-
-	# add essentials
-	other_packages = other_packages + essentials
 
 	# add ucode
 	if archinstall.arguments.get("ucode", None):
@@ -299,7 +296,7 @@ def setup_grub_dist_name(installation):
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
-	commands = ["pacman --noconfirm -S linux-headers"]
+	commands = []
 	if archinstall.arguments["bootloader"] == "systemd-bootctl":
 		add_bootloader(installation)
 	else:
