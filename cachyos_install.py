@@ -160,30 +160,20 @@ def print_separator(current_step = ""):
 	print(bcolors.GRAY + separator_text + " " + g_current_step + " / " + total_steps + bcolors.ENDC, flush=True)
 
 
-
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	os.system(f"wget {cachyos_gpg_key_url}")
-	os.system(f"cp ./cachyos.gpg {installation.target}/usr/share/pacman/keyrings/cachyos.gpg")
-	commands = [
-		"gpg --import /usr/share/pacman/keyrings/cachyos.gpg",
-		"pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg",
-		"pacman-key --finger C3C4820857F654FE",
-		"pacman-key --lsign-key C3C4820857F654FE",
-		"pacman-key --finger 49B94AEF35812D6C",
-		"pacman-key --lsign-key 49B94AEF35812D6C",
-		"pacman-key --finger 4FF8FF1748568017C146718109D27738912724BE"
-		"pacman-key --lsign-key 4FF8FF1748568017C146718109D27738912724BE"
-		"pacman-key --populate"
-		"pacman-key --init"
-	]
+	_keypkgname = "keyring-cachyos-1-6-x86_64.pkg.tar.zst"
+	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
+
+	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
 	run_custom_user_commands(commands, installation)
+	os.system(f"rm {installation.target}/root/{_keypkgname}")
 
 def add_cachyos_repo(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
 	_file = "/etc/pacman.conf"
 	commands = [
-		"sed -i 's/\[core\]/\[cachyos\]\\nSigLevel = Optional TrustAll\\nServer = https:\/\/cachyos.github.io\/cachyos_repo\/x86_64\\n\\n\[core\]/' " + _file,
+		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/cachyos.github.io\/cachyos_repo\/x86_64\\n\\n\[core\]/' " + _file,
 		'pacman --noconfirm -Sy'
 	]
 	run_custom_user_commands(commands, installation)
