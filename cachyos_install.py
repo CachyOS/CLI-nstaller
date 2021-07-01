@@ -262,33 +262,17 @@ def install_cachyos_packages(installation):
 		commands = ["pacman --noconfirm -S " + cachyos_packages]
 		run_custom_user_commands(commands, installation)
 
-def add_bootloader(installation, bootloader='systemd-bootctl'):
-	boot_partition = None
-	root_partition = None
-	for partition in archinstall.arguments['harddrive']:
-		if partition.mountpoint == installation.target + '/boot':
-			boot_partition = partition
-		elif partition.mountpoint == installation.target:
-			root_partition = partition
+def add_bootloader(installation):
+	_path		= f"{installation.target}/boot/loader/entries"
+	_filename	= "cachyos.conf"
+	_file		= f"{_path}/{_filename}"
+	cp_cmd		= f"cp $(ls {_path}/*) {_file}"
+	ch_title_cmd	= f"sed -i 's/Arch/CachyOS/g' {_file}"
+	ch_kernel_cmd	= f"sed -i 's/-linux/-linux-cachyos/g' {_file}"
 
-	with open(f'{installation.target}/boot/loader/entries/cachyos.conf', 'w') as entry:
-		entry.write('title CachyOS Linux\n')
-		entry.write('linux /vmlinuz-linux-cachyos\n')
-		if not is_vm():
-			vendor = cpu_vendor()
-			if vendor == "AuthenticAMD":
-				entry.write("initrd /amd-ucode.img\n")
-			elif vendor == "GenuineIntel":
-				entry.write("initrd /intel-ucode.img\n")
-
-		entry.write('initrd /initramfs-linux-cachyos.img\n')
-
-		if real_device := installation.detect_encryption(root_partition):
-			archinstall.log(f"Identifying root partition by PART-UUID on {real_device}: '{real_device.uuid}'.", level=logging.DEBUG)
-			entry.write(f'options cryptdevice=PARTUUID={real_device.uuid}:luksdev root=/dev/mapper/luksdev rw intel_pstate=no_hwp {" ".join(installation.KERNEL_PARAMS)}\n')
-		else:
-			archinstall.log(f"Identifying root partition by PART-UUID on {root_partition}, looking for '{root_partition.uuid}'.", level=logging.DEBUG)
-			entry.write(f'options root=PARTUUID={root_partition.uuid} rw intel_pstate=no_hwp {" ".join(installation.KERNEL_PARAMS)}\n')
+	os.system(cp_cmd)
+	os.system(ch_title_cmd)
+	os.system(ch_kernel_cmd)
 
 def setup_grub_dist_name(installation):
 	_file = f"/{installation.target}/etc/default/grub"
