@@ -12,7 +12,6 @@ except:
 
 import archinstall
 from archinstall.lib.general import run_custom_user_commands
-# from archinstall.lib.hardware import has_uefi, AVAILABLE_GFX_DRIVERS
 from archinstall.lib.hardware import *
 from archinstall.lib.networking import check_mirror_reachable
 from archinstall.lib.profiles import Profile
@@ -39,7 +38,7 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = ["firefox"]
+browser = "librewolf "
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
@@ -218,37 +217,37 @@ def install_selected_packages(installation):
 		if ins_sel == "moderated KDE":
 			installation.add_additional_packages(minimum_kde_packages)
 			installation.add_additional_packages(rec_kde_packages)
-			other_packages = other_packages + browser
+			cachyos_packages += browser
 		if ins_sel == "full KDE":
 			installation.add_additional_packages(minimum_kde_packages)
 			installation.add_additional_packages(rec_kde_packages)
 			installation.add_additional_packages(full_kde_packages)
-			other_packages = other_packages + browser
+			cachyos_packages += browser
 
 	# add ucode
 	if archinstall.arguments.get("ucode", None):
-		other_packages = other_packages + [archinstall.arguments["ucode"]]
+		other_packages += [archinstall.arguments["ucode"]]
 
 	# add graphics driver
 	if archinstall.arguments.get("graphics_driver", None):
 		graphics_driver = archinstall.arguments["graphics_driver"]
 
 		if graphics_driver == "Xorg Intel":
-			other_packages = other_packages + Xorg_Intel_pa
+			other_packages += Xorg_Intel_pa
 		elif graphics_driver == "Nouveau":
-			other_packages = other_packages + Nouveau_pa
+			other_packages += Nouveau_pa
 		elif graphics_driver == "Xorg AMD":
-			other_packages = other_packages + Xorg_amdgpu_pa
+			other_packages += Xorg_amdgpu_pa
 		elif graphics_driver == "Xorg vmware":
-			other_packages = other_packages + Xorg_vmware_pa
+			other_packages += Xorg_vmware_pa
 		elif graphics_driver == "Xorg ati":
-			other_packages = other_packages + Xorg_ati_pa
+			other_packages += Xorg_ati_pa
 		elif graphics_driver == "Xorg vesa":
-			other_packages = other_packages + Xorg_vesa_pa
+			other_packages += Xorg_vesa_pa
 		elif graphics_driver == "Xorg Openchrome":
-			other_packages = other_packages + Xorg_Openchrome_pa
+			other_packages += Xorg_Openchrome_pa
 		elif graphics_driver == "Xorg Nvidia":
-			other_packages = other_packages + Nvidia_pa
+			other_packages += Nvidia_pa
 
 	if other_packages:
 		installation.add_additional_packages(other_packages)
