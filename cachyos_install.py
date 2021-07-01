@@ -295,10 +295,12 @@ def fish_as_default(installation):
 def tweak_conf_files(installation):
 	paconf = f"/{installation.target}/etc/pacman.conf"
 	mkconf = f"/{installation.target}/etc/makepkg.conf"
+	osrelease = f"/{installation.target}/etc/os-release"
 
 	os.system(f"sed -i 's/#Color/Color\\n#ILoveCandy/' {paconf}")
 	os.system(f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
 	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
+	os.system(f"sed -i 's/Arch/CachyOS/g' {osrelease}")
 
 def run_cachyos_commands(installation):
 	print_separator()
