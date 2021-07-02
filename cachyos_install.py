@@ -1,3 +1,7 @@
+"""
+	This is an archinstall 2.2.0-1 derived python file.
+"""
+
 import json
 import logging
 import os
