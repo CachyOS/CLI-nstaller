@@ -1,0 +1,39 @@
+--- /usr/lib/python3.9/site-packages/archinstall/lib/installer.py	2021-05-30 21:00:29.000000000 +0300
++++ ./installer.py	2021-07-02 23:28:55.972129483 +0300
+@@ -368,7 +368,7 @@
+ 
+ 		return True
+ 
+-	def add_bootloader(self, bootloader='systemd-bootctl'):
++	def add_bootloader(self, _device, bootloader='systemd-bootctl'):
+ 		boot_partition = None
+ 		root_partition = None
+ 		for partition in self.partitions:
+@@ -447,7 +447,14 @@
+ 				return True
+ 
+ 		elif bootloader == "grub-install":
+-			self.pacstrap('grub')
++			if real_device := self.detect_encryption(root_partition):
++				_file = "/etc/default/grub"
++				root_uuid = SysCommand(f"blkid -s UUID -o value {real_device.path}").decode().rstrip()
++				add_to_CMDLINE_LINUX = f"sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"cryptdevice=UUID={root_uuid}:cryptlvm\"/'"
++				enable_CRYPTODISK = "sed -i 's/#GRUB_ENABLE_CRYPTODISK=y/GRUB_ENABLE_CRYPTODISK=y/'"
++
++				SysCommand(f"/usr/bin/arch-chroot {self.target} {add_to_CMDLINE_LINUX} {_file}")
++				SysCommand(f"/usr/bin/arch-chroot {self.target} {enable_CRYPTODISK} {_file}")
+ 
+ 			if has_uefi():
+ 				self.pacstrap('efibootmgr')
+@@ -456,10 +463,7 @@
+ 				self.helper_flags['bootloader'] = True
+ 				return True
+ 			else:
+-				root_device = subprocess.check_output(f'basename "$(readlink -f /sys/class/block/{root_partition.path.replace("/dev/", "")}/..)"', shell=True).decode().strip()
+-				if root_device == "block":
+-					root_device = f"{root_partition.path}"
+-				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc /dev/{root_device}'))
++				o = b''.join(SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {_device.path}'))
+ 				SysCommand('/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg')
+ 				self.helper_flags['bootloader'] = True
+ 				return True
