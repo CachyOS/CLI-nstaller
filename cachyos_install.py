@@ -525,10 +525,10 @@ def ask_user_questions():
 		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 	print_separator("5")
-	print("1- minimum installation (no desktop)")
-	print("2- minimam KDE plasma desktop")
-	print("3- moderated KDE plasma desktop (default, recommended)")
-	print("4- full KDE plasma desktop")
+	print("1- minimum installation [~3.2G] (no desktop)")
+	print("2- minimam KDE plasma desktop [~5.5G]")
+	print("3- moderated KDE plasma desktop [~6.6G] (default, recommended)")
+	print("4- full KDE plasma desktop [~10G]")
 	print("5- other options")
 	answer = input("Select installation (1, 2, 3, 4, or 5): ")
 	desktop_env = False
