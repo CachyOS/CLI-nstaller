@@ -120,7 +120,7 @@ def check_internet_connectivity(nr_tries=1):
 		if nr_tries == 1:
 			nr_tries = 2
 			print(bcolors.YELLOW + "It seems not connected! Waiting for 10s before trying again..." + bcolors.ENDC)
-			time.sleep(10)
+			time.sleep(21)
 			check_internet_connectivity(nr_tries)
 			return
 
