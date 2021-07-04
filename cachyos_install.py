@@ -318,6 +318,11 @@ def tweak_conf_files(installation):
 	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
 	os.system(f"sed -i 's/Arch/CachyOS/g' {osrelease}")
 
+
+def clean_pacman_cache(installation):
+	run_custom_user_commands(["yes | pacman -Scc"], installation)
+
+
 def run_cachyos_commands(installation):
 	print_separator()
 	print(f"{bcolors.GRAY}Running CachyOS Setup...\n{bcolors.ENDC}")
@@ -331,6 +336,7 @@ def run_cachyos_commands(installation):
 	setup_kde_plasma(installation)
 	fish_as_default(installation)
 	tweak_conf_files(installation)
+	clean_pacman_cache(installation)
 
 
 def cachy_ask_for_main_filesystem_format():
@@ -538,10 +544,10 @@ def ask_user_questions():
 		archinstall.arguments['superusers'] = {**archinstall.arguments['superusers'], **superusers}
 
 	print_separator("5")
-	print("1- minimum installation [~3.2G] (no desktop)")
-	print("2- minimam KDE plasma desktop [~5.5G]")
-	print("3- moderated KDE plasma desktop [~6.6G] (default, recommended)")
-	print("4- full KDE plasma desktop [~10G]")
+	print("1- minimum installation [~2.5G] (no desktop)")
+	print("2- minimam KDE plasma desktop [~4.6G]")
+	print("3- moderated KDE plasma desktop [~5.3G] (default, recommended)")
+	print("4- full KDE plasma desktop [~8G]")
 	print("5- other options")
 	answer = input("Select installation (1, 2, 3, 4, or 5): ")
 	desktop_env = False
