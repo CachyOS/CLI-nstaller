@@ -81,6 +81,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "--semi-offline":
 	cachy_offline = True
 	print(bcolors.GRAY + "mode: " + sys.argv[1] + bcolors.ENDC)
 
+
 def print_cachyos_banner():
 	cachyos_banner = subprocess.run(['figlet', '     CachyOS'], stdout=subprocess.PIPE)
 	print(chr(27) + "[2J")
@@ -90,6 +91,7 @@ def print_cachyos_banner():
 	print(bcolors.YELLOW + "--------------" + bcolors.ENDC)
 
 	print("\nWelcome to the CachyOS installer")
+
 
 def show_iwctl():
 	archinstall.log("Instructions to connect to wifi using iwclt:", fg="yellow")
@@ -103,6 +105,7 @@ def show_iwctl():
 
 	input("Press Enter to continue to iwctl...")
 	os.system("iwctl")
+
 
 def check_internet_connectivity(nr_tries=1):
 	print("\nChecking internet connectivity...")
@@ -182,6 +185,7 @@ def add_cachyos_repo(installation):
 	]
 	run_custom_user_commands(commands, installation)
 
+
 def enable_services(installation):
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
@@ -246,6 +250,7 @@ def install_selected_packages(installation):
 	if other_packages:
 		installation.add_additional_packages(other_packages)
 
+
 def install_cachyos_packages(installation):
 	print(f"\n{bcolors.GRAY}Installing CachyOS Packages...\n{bcolors.ENDC}")
 
@@ -254,6 +259,7 @@ def install_cachyos_packages(installation):
 	else:
 		commands = ["pacman --noconfirm -S " + cachyos_packages]
 		run_custom_user_commands(commands, installation)
+
 
 def add_bootloader(installation):
 	_path		= f"{installation.target}/boot/loader/entries"
@@ -267,9 +273,11 @@ def add_bootloader(installation):
 	os.system(ch_title_cmd)
 	os.system(ch_kernel_cmd)
 
+
 def setup_grub_dist_name(installation):
 	_file = f"/{installation.target}/etc/default/grub"
 	os.system(f"sed -i 's/Arch/CachyOS/g' {_file}")
+
 
 def update_bootloader(installation):
 	print(f"\n{bcolors.GRAY}Updating the bootloader...\n{bcolors.ENDC}")
@@ -281,6 +289,7 @@ def update_bootloader(installation):
 		commands = commands + ["grub-mkconfig -o /boot/grub/grub.cfg"]
 	run_custom_user_commands(commands, installation)
 
+
 def setup_kde_plasma(installation):
 	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
 	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
@@ -289,12 +298,14 @@ def setup_kde_plasma(installation):
 		_file = f"/{installation.target}/home/{user}/.config/dolphinrc"
 		os.system(f"echo -e \"\n[MainWindow][Toolbar mainToolBar]\nToolButtonStyle=IconOnly\n\" >> {_file}")
 
+
 def fish_as_default(installation):
 	commands = []
 	for user, user_info in archinstall.arguments.get('superusers', {}).items():
 		commands = commands + [f"usermod --shell $(which fish) {user}"]
 
 	run_custom_user_commands(commands, installation)
+
 
 def tweak_conf_files(installation):
 	paconf = f"/{installation.target}/etc/pacman.conf"
@@ -331,6 +342,7 @@ def cachy_ask_for_main_filesystem_format():
 
 	value = archinstall.generic_select(options, "Select which filesystem your main partition should use (by number or name, default is xfs): ", allow_empty_input=True)
 	return next((key for key, val in options.items() if val == value), None)
+
 
 def set_permissions(installation):
 	commands = []
@@ -642,6 +654,7 @@ def ask_user_questions():
 			if archinstall.arguments['ntp']:
 				archinstall.log("Hardware time and other post-configuration steps might be required in order for NTP to work. For more information, please check the Arch wiki.", fg="yellow")
 
+
 def wipe_disk():
 	# umount partitions in case they are mounted before
 	for partition in archinstall.arguments['harddrive']:
@@ -660,6 +673,7 @@ def wipe_disk():
 		os.system("mkfs.vfat " + _disk)
 
 	archinstall.arguments['harddrive'].flush_cache()
+
 
 def perform_installation_steps():
 	print()
