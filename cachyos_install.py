@@ -22,16 +22,15 @@ from archinstall.lib.profiles import Profile
 
 cachy_offline = False
 
-essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git",
-		"paru-bin", "cachyos-settings"]
+essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cachyos linux-cachyos-headers "
+cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru-bin "
 cachyos_kde_theme = "cachyos-kde-theme "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
 			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
-			"lib32-gamemode", "ksysguard", "pamac-aur"]
+			"gamemode", "lib32-gamemode", "ksysguard", "pamac-aur"]
 
 rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
 			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
@@ -183,6 +182,7 @@ def add_cachyos_repo(installation):
 	_file = "/etc/pacman.conf"
 	commands = [
 		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/cachyos.github.io\/cachyos_repo\/x86_64\\n\\n\[core\]/' " + _file,
+		"sed -i -z 's/#\[multilib\]\\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\\nInclude = \/etc\/pacman.d\/mirrorlist/' " + _file,
 		'pacman --noconfirm -Sy'
 	]
 	run_custom_user_commands(commands, installation)
