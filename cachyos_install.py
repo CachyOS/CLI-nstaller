@@ -23,14 +23,15 @@ from archinstall.lib.profiles import Profile
 cachy_offline = False
 
 essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git",
-		"paru-bin", "reflector", "irqbalance"]
+		"paru-bin", "cachyos-settings"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers "
 cachyos_kde_theme = "cachyos-kde-theme "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
-			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans"]
+			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
+			"lib32-gamemode", "ksysguard", "pamac-aur"]
 
 rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
 			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
