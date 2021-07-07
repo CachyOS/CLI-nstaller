@@ -181,7 +181,7 @@ def add_cachyos_repo(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
 	_file = "/etc/pacman.conf"
 	commands = [
-		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/cachyos.github.io\/cachyos_repo\/x86_64\\n\\n\[core\]/' " + _file,
+		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/aur.cachyos.org\/cachyos-aur\/x86_64\\n\\n\[core\]/' " + _file,
 		"sed -i -z 's/#\[multilib\]\\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\\nInclude = \/etc\/pacman.d\/mirrorlist/' " + _file,
 		'pacman --noconfirm -Sy'
 	]
