@@ -120,7 +120,7 @@ def check_internet_connectivity(nr_tries=1):
 		conn.close()
 		if nr_tries == 1:
 			nr_tries = 2
-			print(bcolors.YELLOW + "It seems not connected! Waiting for 10s before trying again..." + bcolors.ENDC)
+			print(bcolors.YELLOW + "It seems not connected! Waiting for 20s before trying again..." + bcolors.ENDC)
 			time.sleep(21)
 			check_internet_connectivity(nr_tries)
 			return
@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-6-x86_64.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-7-x86_64.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -183,7 +183,7 @@ def add_cachyos_repo(installation):
 	commands = [
 		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/aur.cachyos.org\/cachyos-aur\/x86_64\\n\\n\[core\]/' " + _file,
 		"sed -i -z 's/#\[multilib\]\\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\\nInclude = \/etc\/pacman.d\/mirrorlist/' " + _file,
-		'pacman --noconfirm -Sy'
+		'pacman --noconfirm -Syy'
 	]
 	run_custom_user_commands(commands, installation)
 
