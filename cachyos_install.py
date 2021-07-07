@@ -53,7 +53,7 @@ Xorg_vmware_pa = ["xf86-video-vmare"]
 Xorg_ati_pa = ["xf86-video-ati"]
 Xorg_vesa_pa = ["xf86-video-vesa"]
 Xorg_Openchrome_pa = ["xf86-video-openchrome"]
-Nvidia_pa = ["nvidia", "nvidia-settings", "nvidia-utils", "nvidia-dkms", "dkms"]
+Nvidia_pa = ["nvidia-cachyos-meta", "dkms"]
 
 class bcolors:
 	HEADER = '\033[95m'
