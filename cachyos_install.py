@@ -179,13 +179,17 @@ def add_cachyos_keyring(installation):
 
 def add_cachyos_repo(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS Repository...\n{bcolors.ENDC}")
-	_file = "/etc/pacman.conf"
+	_pacman = "pacman.conf"
+	_script = "enable_v3.sh"
 	commands = [
-		"sed -i 's/\[core\]/\[cachyos\]\\nServer = https:\/\/aur.cachyos.org\/cachyos-aur\/x86_64\\n\\n\[core\]/' " + _file,
-		"sed -i -z 's/#\[multilib\]\\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\\nInclude = \/etc\/pacman.d\/mirrorlist/' " + _file,
-		'pacman --noconfirm -Syy'
+		f'chmod +x /root/{_script}',
+		f'/root/{_script}'
 	]
+
+	os.system(f"cp /root/{_pacman} {installation.target}/etc/")
+	os.system(f"cp /root/{_script} {installation.target}/root/")
 	run_custom_user_commands(commands, installation)
+	os.system(f"rm {installation.target}/root/{_script}")
 
 
 def enable_services(installation):
@@ -872,12 +876,24 @@ def perform_installation(mountpoint):
 	archinstall.log(f"Disk states after installing: {archinstall.disk_layouts()}", level=logging.DEBUG)
 
 
+def enable_v3():
+	_script = "/root/enable_v3.sh"
+	done_file = "/root/enable_v3.sh.done"
+	done = os.path.isfile(done_file)
+	if not done:
+		os.system(f"chmod +x {_script}")
+		os.system(_script)
+		os.system(f"touch {done_file}")
+
+
 print(bcolors.GRAY + "Check if Arch Linux mirrors are not reachable... " + bcolors.ENDC, flush=True, end="")
 if not check_mirror_reachable():
 	log_file = os.path.join(archinstall.storage.get('LOG_PATH', None), archinstall.storage.get('LOG_FILE', None))
 	archinstall.log(f"Arch Linux mirrors are not reachable. Please check your internet connection and the log file '{log_file}'.", level=logging.INFO, fg="red")
 	exit(1)
 print(bcolors.OKGREEN + "(OK)" + bcolors.ENDC)
+
+enable_v3()
 
 if archinstall.arguments.get('silent', None) is None:
 	ask_user_questions()
