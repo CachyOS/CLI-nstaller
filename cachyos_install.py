@@ -26,7 +26,7 @@ essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru-bin "
-cachyos_kde_theme = "cachyos-kde-theme "
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
 			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
@@ -111,7 +111,7 @@ def show_iwctl():
 def check_internet_connectivity(nr_tries=1):
 	print("\nChecking internet connectivity...")
 
-	conn = httplib.HTTPConnection("www.google.com", timeout=5)
+	conn = httplib.HTTPConnection("www.google.com", timeout=10)
 	try:
 		conn.request("HEAD", "/")
 		conn.close()
