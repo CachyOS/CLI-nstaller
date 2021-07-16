@@ -321,7 +321,7 @@ def tweak_conf_files(installation):
 
 	os.system(f"sed -i 's/#Color/Color\\n#ILoveCandy/' {paconf}")
 	os.system(f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
-	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
+	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' {mkconf}")
 	os.system(f"sed -i 's/Arch/CachyOS/g' {osrelease}")
 
 
