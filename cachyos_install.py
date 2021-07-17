@@ -25,7 +25,7 @@ cachy_offline = False
 essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru-bin "
+cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
