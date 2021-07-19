@@ -297,15 +297,6 @@ def update_bootloader(installation):
 	run_custom_user_commands(commands, installation)
 
 
-def setup_kde_plasma(installation):
-	_file = f"/{installation.target}/usr/share/plasma/shells/org.kde.plasma.desktop/contents/layout.js"
-	os.system(f"sed -i 's/loadTemplate/\/\/loadTemplate/g' {_file}")
-
-	for user, user_info in archinstall.arguments.get('superusers', {}).items():
-		_file = f"/{installation.target}/home/{user}/.config/dolphinrc"
-		os.system(f"echo -e \"\n[MainWindow][Toolbar mainToolBar]\nToolButtonStyle=IconOnly\n\" >> {_file}")
-
-
 def fish_as_default(installation):
 	commands = []
 	for user, user_info in archinstall.arguments.get('superusers', {}).items():
@@ -339,7 +330,6 @@ def run_cachyos_commands(installation):
 	update_bootloader(installation)
 
 	# other setups
-	setup_kde_plasma(installation)
 	fish_as_default(installation)
 	tweak_conf_files(installation)
 	clean_pacman_cache(installation)
