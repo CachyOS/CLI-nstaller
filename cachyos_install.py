@@ -37,13 +37,13 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-			"dragon", "elisa", "ark", "gnome-calculator", "htop",
+			"dragon", "elisa", "ark", "htop",
 			"tree"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = "librewolf "
+browser = ["librewolf", "firefox", "firedragon"]
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
