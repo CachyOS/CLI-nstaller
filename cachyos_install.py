@@ -29,7 +29,7 @@ cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin 
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
-			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
+			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans", "kscreen",
 			"gamemode", "lib32-gamemode", "ksysguard", "pamac-aur"]
 
 rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
@@ -37,8 +37,7 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-			"dragon", "elisa", "ark", "htop",
-			"tree"]
+			"dragon", "elisa", "ark", "htop","tree"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
