@@ -41,7 +41,7 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kdeplasma-addons", "ksysguard",
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = ["librewolf"]
+browser = ["firefox"]
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
@@ -213,7 +213,7 @@ def install_selected_packages(installation):
 	if ins_sel:
 		if ins_sel == "minimam KDE" or ins_sel == "moderated KDE" or ins_sel == "full KDE":
 			cachyos_packages += cachyos_kde_theme
-			cachyos_packages += "ntn "
+			cachyos_packages += "ntn"
 
 		if ins_sel == "minimam KDE":
 			installation.add_additional_packages(minimum_kde_packages)
