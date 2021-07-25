@@ -25,19 +25,18 @@ cachy_offline = False
 essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
+cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin"
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git"
 
-minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
-			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans", "kscreen",
-			"gamemode", "lib32-gamemode", "ksysguard", "pamac-aur"]
+minimum_kde_packages =	["plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa", "plasma-wayland-session",
+			"konsole", "kate", "ark", "kde-gtk-config", "dolphin", "sddm", "sddm-kcm", "ttf-opensans", "kscreen",
+			"plasma-systemmonitor", "pamac-aur"]
 
-rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
-			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
-			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
+rec_kde_packages =	["bluedevil", "drkonqi", "kdeplasma-addons", "ksysguard",
+			"khotkeys", "kinfocenter", "ksshaskpass", "plasma-thunderbolt",
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-			"dragon", "elisa", "ark", "htop","tree"]
+			"dragon", "elisa", "htop", "tree"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
@@ -194,7 +193,7 @@ def add_cachyos_repo(installation):
 def enable_services(installation):
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
-	if ins_sel and (ins_sel == "minimam KDE" or 
+	if ins_sel and (ins_sel == "minimam KDE" or
 			ins_sel == "moderated KDE" or ins_sel == "full KDE"):
 		try:
 			# add sddm service if kde is isntalled
