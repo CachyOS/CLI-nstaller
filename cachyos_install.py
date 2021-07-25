@@ -25,23 +25,25 @@ cachy_offline = False
 essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
 cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
-cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin"
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git"
+cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
-minimum_kde_packages =	["plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa", "plasma-wayland-session",
-			"konsole", "kate", "ark", "kde-gtk-config", "dolphin", "sddm", "sddm-kcm", "ttf-opensans", "kscreen",
-			"plasma-systemmonitor", "pamac-aur"]
+minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
+			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
+			"gamemode", "lib32-gamemode", "ksysguard", "pamac-aur"]
 
-rec_kde_packages =	["bluedevil", "drkonqi", "kdeplasma-addons", "ksysguard",
-			"khotkeys", "kinfocenter", "ksshaskpass", "plasma-thunderbolt",
+rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
+			"khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
+			"plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
 			"kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
 			"xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-			"dragon", "elisa", "htop", "tree"]
+			"dragon", "elisa", "ark", "gnome-calculator", "htop",
+			"tree"]
 
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = ["firefox"]
+browser = "librewolf "
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
@@ -168,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-9-any.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-8-x86_64.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -193,7 +195,7 @@ def add_cachyos_repo(installation):
 def enable_services(installation):
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
-	if ins_sel and (ins_sel == "minimam KDE" or
+	if ins_sel and (ins_sel == "minimam KDE" or 
 			ins_sel == "moderated KDE" or ins_sel == "full KDE"):
 		try:
 			# add sddm service if kde is isntalled
@@ -213,7 +215,7 @@ def install_selected_packages(installation):
 	if ins_sel:
 		if ins_sel == "minimam KDE" or ins_sel == "moderated KDE" or ins_sel == "full KDE":
 			cachyos_packages += cachyos_kde_theme
-			cachyos_packages += "ntn"
+			cachyos_packages += "ntn "
 
 		if ins_sel == "minimam KDE":
 			installation.add_additional_packages(minimum_kde_packages)
