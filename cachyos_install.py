@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-8-x86_64.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-9-any.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -195,7 +195,7 @@ def add_cachyos_repo(installation):
 def enable_services(installation):
 	# check if kde is selected
 	ins_sel = archinstall.arguments.get('installation_selection', None)
-	if ins_sel and (ins_sel == "minimam KDE" or 
+	if ins_sel and (ins_sel == "minimam KDE" or
 			ins_sel == "moderated KDE" or ins_sel == "full KDE"):
 		try:
 			# add sddm service if kde is isntalled
