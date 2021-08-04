@@ -24,7 +24,7 @@ cachy_offline = False
 
 essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git"]
 
-cachyos_gpg_key_url = "https://raw.githubusercontent.com/CachyOS/PKGBUILDS/master/keyring-cachyos/cachyos.gpg"
+cachyos_gpg_key_url = "https://gitea.cachyos.org/CachyOS/PKGBUILDS/raw/branch/master/keyring-cachyos/keyring-cachyos.gpg
 cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-11-any.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-12-any.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
