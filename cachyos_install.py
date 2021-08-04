@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-12-any.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-13-any.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
