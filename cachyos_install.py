@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-9-any.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-11-any.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -312,7 +312,7 @@ def tweak_conf_files(installation):
 
 	os.system(f"sed -i 's/#Color/Color\\n#ILoveCandy/' {paconf}")
 	os.system(f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
-	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' {mkconf}")
+	os.system(f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
 	os.system(f"sed -i 's/Arch/CachyOS/g' {osrelease}")
 
 
