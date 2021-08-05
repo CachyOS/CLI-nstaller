@@ -43,7 +43,7 @@ rec_kde_packages =	["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
 full_kde_packages =	["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = "librewolf "
+browser = "cachy-browser "
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
