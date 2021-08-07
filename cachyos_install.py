@@ -26,7 +26,7 @@ essentials = 	["linux-headers", "vi", "nano", "fish", "bash-completion", "git", 
 
 cachyos_gpg_key_url = "https://gitea.cachyos.org/CachyOS/PKGBUILDS/raw/branch/master/keyring-cachyos/keyring-cachyos.gpg"
 cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git fluent-icon-theme-git "
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git fluent-icon-theme-git "
 
 minimum_kde_packages =	["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
 			"konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
@@ -170,7 +170,7 @@ def print_separator(current_step = ""):
 
 def add_cachyos_keyring(installation):
 	print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-	_keypkgname = "keyring-cachyos-1-13-any.pkg.tar.zst"
+	_keypkgname = "keyring-cachyos-1-15-any.pkg.tar.zst"
 	commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
 	os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -215,7 +215,6 @@ def install_selected_packages(installation):
 	if ins_sel:
 		if ins_sel == "minimam KDE" or ins_sel == "moderated KDE" or ins_sel == "full KDE":
 			cachyos_packages += cachyos_kde_theme
-			cachyos_packages += "ntn "
 
 		if ins_sel == "minimam KDE":
 			installation.add_additional_packages(minimum_kde_packages)
@@ -274,7 +273,7 @@ def add_bootloader(installation):
 	_file		= f"{_path}/{_filename}"
 	cp_cmd		= f"cp $(ls {_path}/*) {_file}"
 	ch_title_cmd	= f"sed -i 's/Arch/CachyOS/g' {_file}"
-	ch_kernel_cmd	= f"sed -i 's/-linux/-linux-cachyos/g' {_file}"
+	ch_kernel_cmd	= f"sed -i 's/-linux/-linux-cacule/g' {_file}"
 
 	os.system(cp_cmd)
 	os.system(ch_title_cmd)
