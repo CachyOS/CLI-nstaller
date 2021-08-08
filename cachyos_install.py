@@ -25,7 +25,7 @@ cachy_offline = False
 essentials = ["linux-headers", "vi", "nano",
               "fish", "bash-completion", "git", "wget"]
 
-cachyos_gpg_key_url = "https://gitea.cachyos.org/CachyOS/PKGBUILDS/raw/branch/master/keyring-cachyos/keyring-cachyos.gpg"
+cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/keyring-cachyos/keyring-cachyos.gpg"
 cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git fluent-icon-theme-git "
 
