@@ -27,7 +27,7 @@ essentials = ["linux-headers", "vi", "nano",
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/keyring-cachyos/cachyos.gpg"
 cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin "
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git fluent-icon-theme-git "
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git "
 
 minimum_kde_packages = ["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
                         "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
@@ -187,7 +187,7 @@ def print_separator(current_step=""):
 
 def add_cachyos_keyring(installation):
     print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-    _keypkgname = "keyring-cachyos-2-2-any.pkg.tar.zst"
+    _keypkgname = "keyring-cachyos-2-4-any.pkg.tar.zst"
     commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
     os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
