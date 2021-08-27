@@ -41,6 +41,8 @@ rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
                     "dragon", "elisa", "ark", "gnome-calculator", "htop",
                     "tree"]
 
+cachyos_gpg_keys = ["F3B607488DB35A47"]
+
 full_kde_packages = ["plasma-meta", "kde-applications-meta"]
 
 # Browsers
@@ -85,6 +87,10 @@ if len(sys.argv) > 1 and sys.argv[1] == "--semi-offline":
     cachy_offline = True
     print(bcolors.GRAY + "mode: " + sys.argv[1] + bcolors.ENDC)
 
+def pre_installation():
+    print("\nImporting CachyOS gpg keys...")
+    for key in cachyos_gpg_keys:
+        os.system(f"pacman-key --recv-keys {key} && pacman-key --lsign-key {key} >/dev/null 2>&1 &")
 
 def print_cachyos_banner():
     cachyos_banner = subprocess.run(
@@ -156,6 +162,7 @@ def print_margin():
 
 
 print_cachyos_banner()
+pre_installation()
 check_internet_connectivity()
 print_margin()
 
@@ -187,7 +194,7 @@ def print_separator(current_step=""):
 
 def add_cachyos_keyring(installation):
     print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-    _keypkgname = "cachyos-keyring-1-1-any.pkg.tar.zst"
+    _keypkgname = "cachyos-keyring-2-1-any.pkg.tar.zst"
     commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
     os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
