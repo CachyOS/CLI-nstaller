@@ -90,7 +90,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "--semi-offline":
 def pre_installation():
     print("\nImporting CachyOS gpg keys...")
     for key in cachyos_gpg_keys:
-        os.system(f"pacman-key --recv-keys {key} && pacman-key --lsign-key {key} >/dev/null 2>&1 &")
+        ret = os.system(f"pacman-key --recv-keys {key} && pacman-key --lsign-key {key} >/dev/null 2>&1 &")
 
 def print_cachyos_banner():
     cachyos_banner = subprocess.run(
