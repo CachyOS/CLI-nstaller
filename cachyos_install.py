@@ -31,7 +31,7 @@ cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git "
 
 minimum_kde_packages = ["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
                         "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
-                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur"]
+                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur", "openssh"]
 
 rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
                     "khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
@@ -87,11 +87,15 @@ if len(sys.argv) > 1 and sys.argv[1] == "--semi-offline":
     cachy_offline = True
     print(bcolors.GRAY + "mode: " + sys.argv[1] + bcolors.ENDC)
 
+
 def pre_installation():
-	archinstall.log("Importing CachyOS gpg keys...", fg="yellow")
-	for key in cachyos_gpg_keys:
-		subprocess.Popen(["pacman-key", "--recv-key", key], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT).wait()
-		subprocess.Popen(["pacman-key", "--lsign-key", key], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT).wait()
+    archinstall.log("Importing CachyOS gpg keys...", fg="yellow")
+    for key in cachyos_gpg_keys:
+        subprocess.Popen(["pacman-key", "--recv-key", key],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT).wait()
+        subprocess.Popen(["pacman-key", "--lsign-key", key],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT).wait()
+
 
 def print_cachyos_banner():
     cachyos_banner = subprocess.run(
