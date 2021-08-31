@@ -38,7 +38,7 @@ rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
                     "plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
                     "kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
                     "xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-                    "dragon", "elisa", "ark", "gnome-calculator", "htop",
+                    "dragon", "elisa", "ark", "htop",
                     "tree"]
 
 cachyos_gpg_keys = ["F3B607488DB35A47"]
