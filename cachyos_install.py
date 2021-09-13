@@ -46,7 +46,7 @@ cachyos_gpg_keys = ["F3B607488DB35A47"]
 full_kde_packages = ["plasma-meta", "kde-applications-meta"]
 
 # Browsers
-browser = ["cachy-browser", "ungoogled-chromium"]
+browser = "cachy-browser "
 
 # Graphics Drivers
 Xorg_Intel_pa = ["xf86-video-intel"]
