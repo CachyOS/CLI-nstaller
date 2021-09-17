@@ -23,7 +23,7 @@ from archinstall.lib.profiles import Profile
 cachy_offline = False
 
 essentials = ["linux-headers", "vi", "nano", "cachyos-v3-mirrorlist", "cachyos-mirrorlist", "cachyos-keyring", "cachyos-theming",
-              "fish", "bash-completion", "git", "wget", "linux-cacule", "linux-cacule-headers", "cachyos-settings", "paru-bin",
+              "fish", "bash-completion", "git", "wget", "linux-cacule", "linux-cacule-headers", "cachyos-settings", "paru-bin", "cachyos-fish-config",
 			  "char-white", "cachyos-emerald-kde-theme-git", "cachyos-nord-kde-theme-git"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
