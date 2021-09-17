@@ -22,8 +22,9 @@ from archinstall.lib.profiles import Profile
 
 cachy_offline = False
 
-essentials = ["linux-headers", "vi", "nano",
-              "fish", "bash-completion", "git", "wget"]
+essentials = ["linux-headers", "vi", "nano", "cachyos-v3-mirrorlist", "cachyos-mirrorlist", "cachyos-keyring", "cachyos-theming",
+              "fish", "bash-completion", "git", "wget", "linux-cacule", "linux-cacule-headers", "cachyos-settings", "paru-bin",
+			  "char-white", "cachyos-emerald-kde-theme-git", "cachyos-nord-kde-theme-git"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
 cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-keyring"
@@ -200,7 +201,7 @@ def print_separator(current_step=""):
 
 def add_cachyos_keyring(installation):
  print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
- _keypkgname = "cachyos-keyring-2-2-any.pkg.tar.zst"
+ _keypkgname = "cachyos-keyring-2-1-any.pkg.tar.zst"
  commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
  os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
