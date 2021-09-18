@@ -32,7 +32,7 @@ cachyos_kde_theme = "cachyos-theming char-white cachyos-emerald-kde-theme-git ca
 
 minimum_kde_packages = ["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
                         "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
-                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur", "openssh"]
+                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur", "openssh", "plasma", "plasma-wayland-protocols", "plasma-wayland-session"]
 
 rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
                     "khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
