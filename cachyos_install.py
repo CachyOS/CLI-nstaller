@@ -26,8 +26,8 @@ essentials = ["linux-headers", "vi", "nano",
               "bash-completion", "git", "wget"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
-cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config "
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git "
+cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config yay-bin "
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white "
 
 minimum_kde_packages = ["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
                         "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "ttf-opensans",
@@ -39,7 +39,7 @@ rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons"
                     "kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
                     "xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
                     "dragon", "elisa", "ark", "gnome-calculator", "htop",
-                    "tree"]
+                    "tree", "plasma-wayland-protocols", "plasma-wayland-session"]
 
 cachyos_gpg_keys = ["F3B607488DB35A47"]
 
@@ -56,7 +56,8 @@ Xorg_vmware_pa = ["xf86-video-vmare"]
 Xorg_ati_pa = ["xf86-video-ati"]
 Xorg_vesa_pa = ["xf86-video-vesa"]
 Xorg_Openchrome_pa = ["xf86-video-openchrome"]
-Nvidia_pa = ["nvidia-cachyos-meta", "dkms"]
+Nvidia_pa = ["nvidia-dkms", "nvidia-utils", "nvidia-settings",
+             "opencl-nvidia", "lib32-opencl-nvidia", "lib32-nvidia-utils", "egl-wayland", "dkms"]
 
 
 class bcolors:
