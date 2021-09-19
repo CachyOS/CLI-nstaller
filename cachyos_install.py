@@ -26,7 +26,7 @@ essentials = ["linux-headers", "vi", "nano",
               "bash-completion", "git", "wget"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
-cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config yay-bin "
+cachyos_packages = "linux-cacule linux-cacule-headers cachyos-settings paru-bin cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config yay-bin nano git wget linux-headers "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white "
 
 minimum_kde_packages = ["xorg", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
@@ -200,7 +200,7 @@ def print_separator(current_step=""):
 
 def add_cachyos_keyring(installation):
     print(f"\n{bcolors.GRAY}Adding CachyOS keyring...\n{bcolors.ENDC}")
-    _keypkgname = "cachyos-keyring-2-2-any.pkg.tar.zst"
+    _keypkgname = "cachyos-keyring-2-1-any.pkg.tar.zst"
     commands = [f"pacman --noconfirm -U /root/{_keypkgname}"]
 
     os.system(f"cp /root/{_keypkgname} {installation.target}/root/")
@@ -862,7 +862,7 @@ def perform_installation(mountpoint):
                 installation.set_mirrors(
                     archinstall.arguments['mirror-region'])
             if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
-                installation.add_additional_packages("grub")
+                installation.add_additional_packages("grub-meta")
             installation.add_bootloader(
                 archinstall.arguments["harddrive"], archinstall.arguments["bootloader"])
 
