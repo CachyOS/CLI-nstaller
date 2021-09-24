@@ -862,7 +862,7 @@ def perform_installation(mountpoint):
                 installation.set_mirrors(
                     archinstall.arguments['mirror-region'])
             if archinstall.arguments["bootloader"] == "grub-install" and has_uefi():
-                installation.add_additional_packages("grub-meta")
+                installation.add_additional_packages("grub")
             installation.add_bootloader(
                 archinstall.arguments["harddrive"], archinstall.arguments["bootloader"])
 
