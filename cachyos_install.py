@@ -26,7 +26,7 @@ essentials = ["linux-headers", "vi", "nano",
               "bash-completion", "git", "wget"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
-cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru cachyos-keyring cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config yay nano git wget linux-headers linux "
+cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru cachyos-keyring cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-iridescent-kde cachyos-fish-config yay nano git wget linux-headers linux "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white "
 
 minimum_kde_packages = ["xorg-server-common", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
