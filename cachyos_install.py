@@ -26,20 +26,20 @@ essentials = ["linux-headers", "vi", "nano",
               "bash-completion", "git", "wget"]
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
-cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru cachyos-keyring cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-iridescent-kde cachyos-fish-config yay nano git wget linux-headers linux "
+cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru cachyos-keyring cachyos cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-iridescent-kde cachyos-fish-config yay nano git wget linux-headers linux "
 cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white "
 
 minimum_kde_packages = ["xorg-server-common", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa",
-                        "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "plasma",
-                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur", "openssh"]
+                        "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "plasma", "plasma-wayland-protocols", "plasma-wayland-session",
+                        "gamemode", "lib32-gamemode", "ksysguard", "pamac-aur", "openssh", "htop"]
 
 rec_kde_packages = ["bluedevil", "drkonqi", "kde-gtk-config", "kdeplasma-addons",
                     "khotkeys", "kinfocenter", "kscreen", "ksshaskpass",
                     "plasma-systemmonitor", "plasma-thunderbolt", "powerdevil",
                     "kwayland-integration", "kwallet-pam", "kgamma5", "breeze-gtk",
                     "xdg-desktop-portal-kde", "gwenview", "okular", "spectacle",
-                    "dragon", "elisa", "ark", "gnome-calculator", "htop",
-                    "tree", "plasma-wayland-protocols", "plasma-wayland-session"]
+                    "dragon", "elisa", "ark", "gnome-calculator", "btop",
+                    "tree"]
 
 cachyos_gpg_keys = ["F3B607488DB35A47"]
 
