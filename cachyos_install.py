@@ -260,7 +260,8 @@ def install_selected_packages(installation):
             installation.add_additional_packages(full_kde_packages)
             cachyos_packages += browser
         if ins_sel == "CuteFish UI":
-            cachyos_packages += cutefish_packages += browser
+            installation.add_additional_packages(cutefish_packages)
+            cachyos_packages += browser
 
             # add ucode
     if archinstall.arguments.get("ucode", None):
@@ -347,7 +348,6 @@ def tweak_conf_files(installation):
         f"sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' {paconf}")
     os.system(
         f"sed -i 's/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(expr $(nproc) + 1)\"/' {mkconf}")
-    os.system(f"sed -i 's/Arch/CachyOS/g' {osrelease}")
 
 
 def clean_pacman_cache(installation):
@@ -614,8 +614,9 @@ def ask_user_questions():
     print("2- minimam KDE plasma desktop [~4.6G]")
     print("3- moderated KDE plasma desktop [~5.3G] (default, recommended)")
     print("4- full KDE plasma desktop [~8G]")
-    print("5- other options")
-    answer = input("Select installation (1, 2, 3, 4, or 5): ")
+    print("5- CuteFish-Desktop")
+    print("6- other options")
+    answer = input("Select installation (1, 2, 3, 4, 5, or 6): ")
     desktop_env = False
 
     if answer == "1":
@@ -627,9 +628,12 @@ def ask_user_questions():
         archinstall.arguments["installation_selection"] = "moderated KDE"
         desktop_env = True
     elif answer == "4":
-        archinstall.arguments["installation_selection"] = "full KDE"
+        archinstall.arguments["installation_selection"] = "CuteFish UI"
         desktop_env = True
     elif answer == "5":
+        archinstall.arguments["installation_selection"] = "full KDE"
+        desktop_env = True
+    elif answer == "6":
         pass
     else:
         archinstall.arguments["installation_selection"] = "moderated KDE"
