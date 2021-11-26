@@ -27,7 +27,7 @@ essentials = ["linux-headers", "vi", "nano",
 
 cachyos_gpg_key_url = "https://gitlab.com/cachyos/PKGBUILDS/-/raw/master/cachyos-keyring/cachyos.gpg"
 cachyos_packages = "linux-cachyos linux-cachyos-headers cachyos-settings paru cachyos-keyring cachyos cachyos-v3-mirrorlist cachyos-mirrorlist cachyos-fish-config yay nano git wget linux-headers linux "
-cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white cachyos-iridescent-kde"
+cachyos_kde_theme = "cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git char-white "
 
 minimum_kde_packages = ["xorg-server-common", "plasma-desktop", "plasma-framework", "plasma-nm", "plasma-pa", "plasma-workspace",
                         "konsole", "kate", "dolphin", "sddm", "sddm-kcm", "plasma", "plasma-wayland-protocols", "plasma-wayland-session",
@@ -628,10 +628,10 @@ def ask_user_questions():
         archinstall.arguments["installation_selection"] = "moderated KDE"
         desktop_env = True
     elif answer == "4":
-        archinstall.arguments["installation_selection"] = "CuteFish UI"
+        archinstall.arguments["installation_selection"] = "full KDE"
         desktop_env = True
     elif answer == "5":
-        archinstall.arguments["installation_selection"] = "full KDE"
+        archinstall.arguments["installation_selection"] = "CuteFish UI"
         desktop_env = True
     elif answer == "6":
         pass
